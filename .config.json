@@ -661,6 +661,25 @@
      "file": "/Users/chris/.node-red/node_modules/node-red-dashboard/nodes/ui_group.js"
     }
    }
+  },
+  "node-red-node-serialport": {
+   "name": "node-red-node-serialport",
+   "version": "0.4.2",
+   "local": true,
+   "nodes": {
+    "serialport": {
+     "name": "serialport",
+     "types": [
+      "serial in",
+      "serial out",
+      "serial-port"
+     ],
+     "enabled": true,
+     "local": true,
+     "module": "node-red-node-serialport",
+     "file": "/Users/chris/.node-red/node_modules/node-red-node-serialport/25-serial.js"
+    }
+   }
   }
  },
  "_credentialSecret": "313ba486c2b1c693bf8c31dcdb7edab8d54abea25c50f9ecb87d014d6c834790"
