@@ -2,7 +2,7 @@
  "nodes": {
   "node-red": {
    "name": "node-red",
-   "version": "0.17.4",
+   "version": "0.17.5",
    "local": false,
    "nodes": {
     "sentiment": {
@@ -349,18 +349,6 @@
      "local": false,
      "module": "node-red",
      "file": "/usr/lib/node_modules/node-red/nodes/core/storage/50-file.js"
-    },
-    "xbeeapi": {
-     "name": "xbeeapi",
-     "types": [
-      "xbee-api in",
-      "xbee-api out",
-      "xbee-api"
-     ],
-     "enabled": true,
-     "local": false,
-     "module": "node-red",
-     "file": "/home/pi/.node-red/nodes/NR-XBeeAPI/56-xbeeapi.js"
     }
    }
   },
@@ -579,7 +567,7 @@
   "node-red-dashboard": {
    "name": "node-red-dashboard",
    "version": "2.4.3",
-   "local": true,
+   "local": false,
    "nodes": {
     "ui_base": {
      "name": "ui_base",
@@ -587,9 +575,9 @@
       "ui_base"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_base.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_base.js"
     },
     "ui_button": {
      "name": "ui_button",
@@ -597,9 +585,9 @@
       "ui_button"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_button.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_button.js"
     },
     "ui_dropdown": {
      "name": "ui_dropdown",
@@ -607,9 +595,9 @@
       "ui_dropdown"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_dropdown.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_dropdown.js"
     },
     "ui_switch": {
      "name": "ui_switch",
@@ -617,9 +605,9 @@
       "ui_switch"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_switch.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_switch.js"
     },
     "ui_slider": {
      "name": "ui_slider",
@@ -627,9 +615,9 @@
       "ui_slider"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_slider.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_slider.js"
     },
     "ui_numeric": {
      "name": "ui_numeric",
@@ -637,9 +625,9 @@
       "ui_numeric"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_numeric.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_numeric.js"
     },
     "ui_text_input": {
      "name": "ui_text_input",
@@ -647,9 +635,9 @@
       "ui_text_input"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_text_input.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_text_input.js"
     },
     "ui_date_picker": {
      "name": "ui_date_picker",
@@ -657,9 +645,9 @@
       "ui_date_picker"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_date_picker.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_date_picker.js"
     },
     "ui_colour_picker": {
      "name": "ui_colour_picker",
@@ -667,9 +655,9 @@
       "ui_colour_picker"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_colour_picker.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_colour_picker.js"
     },
     "ui_form": {
      "name": "ui_form",
@@ -677,9 +665,9 @@
       "ui_form"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_form.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_form.js"
     },
     "ui_text": {
      "name": "ui_text",
@@ -687,9 +675,9 @@
       "ui_text"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_text.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_text.js"
     },
     "ui_gauge": {
      "name": "ui_gauge",
@@ -697,9 +685,9 @@
       "ui_gauge"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_gauge.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_gauge.js"
     },
     "ui_chart": {
      "name": "ui_chart",
@@ -707,9 +695,9 @@
       "ui_chart"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_chart.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_chart.js"
     },
     "ui_audio": {
      "name": "ui_audio",
@@ -717,9 +705,9 @@
       "ui_audio"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_audio.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_audio.js"
     },
     "ui_toast": {
      "name": "ui_toast",
@@ -727,9 +715,9 @@
       "ui_toast"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_toast.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_toast.js"
     },
     "ui_ui_control": {
      "name": "ui_ui_control",
@@ -737,9 +725,9 @@
       "ui_ui_control"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_ui_control.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_ui_control.js"
     },
     "ui_template": {
      "name": "ui_template",
@@ -747,9 +735,9 @@
       "ui_template"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_template.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_template.js"
     },
     "ui_link": {
      "name": "ui_link",
@@ -757,9 +745,9 @@
       "ui_link"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_link.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_link.js"
     },
     "ui_tab": {
      "name": "ui_tab",
@@ -767,9 +755,9 @@
       "ui_tab"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_tab.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_tab.js"
     },
     "ui_group": {
      "name": "ui_group",
@@ -777,35 +765,16 @@
       "ui_group"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-dashboard",
-     "file": "/home/pi/.node-red/node_modules/node-red-dashboard/nodes/ui_group.js"
-    }
-   }
-  },
-  "node-red-contribe-xbee-api": {
-   "name": "node-red-contribe-xbee-api",
-   "version": "0.1.1",
-   "local": true,
-   "nodes": {
-    "xbeeapi": {
-     "name": "xbeeapi",
-     "types": [
-      "xbeeapi in",
-      "xbeeapi out",
-      "xbeeapi-config"
-     ],
-     "enabled": true,
-     "local": true,
-     "module": "node-red-contribe-xbee-api",
-     "file": "/home/pi/.node-red/node_modules/node-red-contribe-xbee-api/xbeeapi.js"
+     "file": "/usr/lib/node_modules/node-red-dashboard/nodes/ui_group.js"
     }
    }
   },
   "node-red-contrib-xbee": {
    "name": "node-red-contrib-xbee",
    "version": "1.0.0",
-   "local": true,
+   "local": false,
    "nodes": {
     "xbee": {
      "name": "xbee",
@@ -815,9 +784,9 @@
       "xbee-config"
      ],
      "enabled": true,
-     "local": true,
+     "local": false,
      "module": "node-red-contrib-xbee",
-     "file": "/home/pi/.node-red/node_modules/node-red-contrib-xbee/lib/xbee-red.js"
+     "file": "/usr/lib/node_modules/node-red-contrib-xbee/lib/xbee-red.js"
     }
    }
   }

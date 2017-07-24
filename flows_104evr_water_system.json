@@ -1,1 +1,1921 @@
-[{"id":"ce14a002.31eb6","type":"tab","label":"Main tank"},{"id":"948b214b.6b74e","type":"tab","label":"Rain tank"},{"id":"2f93ead9.d06c16","type":"tab","label":"I/O"},{"id":"414238f1.bebdc8","type":"tab","label":"Simulation"},{"id":"7f4ce2c1.80b31c","type":"tab","label":"Routing"},{"id":"cfadb3a3.30525","type":"tab","label":"Flow 2"},{"id":"c2e924f0.3d16d8","type":"ui_base","theme":{"name":"theme-dark","lightTheme":{"default":"#0094CE","baseColor":"#0094CE","baseFont":"Helvetica Neue","edited":true,"reset":false},"darkTheme":{"default":"#097479","baseColor":"#097479","baseFont":"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif","edited":true,"reset":false},"customTheme":{"name":"","default":"#4B7930","baseColor":"#4B7930","baseFont":"Helvetica Neue"},"themeState":{"base-color":{"default":"#097479","value":"#097479","edited":false},"page-titlebar-backgroundColor":{"value":"#097479","edited":false},"page-backgroundColor":{"value":"#111111","edited":false},"page-sidebar-backgroundColor":{"value":"#000000","edited":false},"group-textColor":{"value":"#0eb8c0","edited":false},"group-borderColor":{"value":"#555555","edited":false},"group-backgroundColor":{"value":"#333333","edited":false},"widget-textColor":{"value":"#eeeeee","edited":false},"widget-backgroundColor":{"value":"#097479","edited":false},"widget-borderColor":{"value":"#333333","edited":false},"base-font":{"value":"-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"}}},"site":{"name":"Node-RED Dashboard","hideToolbar":"false","allowSwipe":"false","dateFormat":"DD/MM/YYYY","sizes":{"sx":48,"sy":48,"gx":6,"gy":6,"cx":6,"cy":6,"px":0,"py":0}}},{"id":"3ff23924.c00dc6","type":"ui_tab","z":"","name":"Summary","icon":"dashboard","order":1},{"id":"16b57cf4.e94a83","type":"ui_group","z":"","name":"Main Tank","tab":"3ff23924.c00dc6","order":1,"disp":true,"width":"6"},{"id":"c80996e.f37f668","type":"ui_group","z":"","name":"Rain Tank","tab":"3ff23924.c00dc6","order":2,"disp":true,"width":"6"},{"id":"c97abe4.f36854","type":"serial-port","z":"","serialport":"/dev/ttyUSB0","serialbaud":"115200","databits":"8","parity":"none","stopbits":"1","newline":"50","bin":"false","out":"time","addchar":false},{"id":"65cd83bd.9a327c","type":"ui_tab","z":"","name":"Settings","icon":"dashboard","order":2},{"id":"3f2c84b1.c0d37c","type":"ui_group","z":"","name":"Test","tab":"65cd83bd.9a327c","order":3,"disp":true,"width":"6"},{"id":"fc2a2add.7bd128","type":"serial-port","z":"","serialport":"/dev/ttyS0","serialbaud":"115200","databits":"8","parity":"none","stopbits":"1","newline":"\\n","bin":"false","out":"char","addchar":false},{"id":"825a1462.864af","type":"xbee-config","z":"","apiMode":"1","rawFrames":false,"convertAdc":true,"vrefAdc":"1200","serialPort":"/dev/ttyS0","lock":false,"baudRate":"115200","dataBits":"8","stopBits":"1","parity":"none","bufferSize":"65536","rtscts":false,"xon":false,"xoff":false,"xany":false,"vmin":"1","vtime":"0"},{"id":"57c74e51.8108f8","type":"ui_group","z":"","name":"Main Tank","tab":"65cd83bd.9a327c","order":1,"disp":true,"width":"6"},{"id":"95c34752.a45b58","type":"ui_group","z":"","name":"Rain Tank","tab":"65cd83bd.9a327c","order":2,"disp":true,"width":"6"},{"id":"97bd4f7b.6842b","type":"ui_gauge","z":"ce14a002.31eb6","name":"","group":"16b57cf4.e94a83","order":1,"width":0,"height":0,"gtype":"wave","title":"Level","label":"%","format":"{{value}}\"%\"","min":0,"max":"100","colors":["#00B500","#E6E600","#CA3838"],"seg1":"","seg2":"","x":401.5,"y":45,"wires":[]},{"id":"1d20266f.e2dfda","type":"function","z":"ce14a002.31eb6","name":"Schmitt trigger","func":"// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 80;\nconst offThreshold = 70;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = msg.payload = true;\n}\nelse if ((level < offThreshold) && myState) {\n    myState = msg.payload = false;\n}\nelse {\n    msg = null;\n}\n\ncontext.set('myState',myState);\nreturn msg;","outputs":1,"noerr":0,"x":440.5,"y":127,"wires":[["307f2ad4.cf80d6"]]},{"id":"307f2ad4.cf80d6","type":"ui_switch","z":"ce14a002.31eb6","name":"","label":"Dump to Rain tank","group":"16b57cf4.e94a83","order":2,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"isOn","style":"","onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":447.5,"y":169,"wires":[["effaec39.10051"]]},{"id":"57cbbac3.a83444","type":"ui_switch","z":"ce14a002.31eb6","name":"","label":"Low water ALARM!","group":"16b57cf4.e94a83","order":3,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"","style":"","onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":188.5,"y":230,"wires":[["d862afd8.279d5","af3a52af.50c5b"]]},{"id":"4951d9d9.b6ae28","type":"function","z":"ce14a002.31eb6","name":"Schmitt trigger","func":"// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 55;\nconst offThreshold = 50;\n\nvar myState = context.get('myState')||false;\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = true;\n} else if ((level < offThreshold) && myState) {\n    myState = false;\n} else {\n    return null;\n}\n\ncontext.set('myState',myState);\n\n// invert the output cos it's a LOW level alert\nmsg.payload = !myState;\nmsg.data = level;\n\nreturn msg;","outputs":1,"noerr":0,"x":177,"y":189,"wires":[["57cbbac3.a83444"]]},{"id":"5fd4d498.a02b2c","type":"link in","z":"ce14a002.31eb6","name":"Main tank level","links":["aba6d704.545928"],"x":174.5,"y":55,"wires":[["4951d9d9.b6ae28","1d20266f.e2dfda","97bd4f7b.6842b"]]},{"id":"effaec39.10051","type":"link out","z":"ce14a002.31eb6","name":"Rainwater dump switch","links":["77203f60.88dfc"],"x":502.5,"y":245,"wires":[]},{"id":"a1f727.ff5e08d8","type":"ui_gauge","z":"948b214b.6b74e","name":"","group":"c80996e.f37f668","order":1,"width":0,"height":0,"gtype":"wave","title":"Level","label":"%","format":"{{value}}","min":0,"max":"100","colors":["#00B500","#E6E600","#CA3838"],"seg1":"","seg2":"","x":380,"y":96,"wires":[]},{"id":"28e68301.d7197c","type":"inject","z":"414238f1.bebdc8","name":"Council water source","topic":"","payload":"4","payloadType":"num","repeat":"1","crontab":"","once":false,"x":141.5,"y":77,"wires":[["a086b55d.5f7948"]]},{"id":"7f1ee5f3.80e11c","type":"inject","z":"414238f1.bebdc8","name":"Rainwater Diversion sink","topic":"","payload":"-10","payloadType":"num","repeat":"1","crontab":"","once":false,"x":151.5,"y":131,"wires":[["d3068670.2cf978"]]},{"id":"a086b55d.5f7948","type":"function","z":"414238f1.bebdc8","name":"Main tank","func":"var fill = context.get('fill')||0;\n\nfill = Math.max(Math.min(fill+msg.payload,100),0);\n\ncontext.set('fill',fill);\n\nmsg.payload = Math.round(fill);\nreturn msg;","outputs":1,"noerr":0,"x":580,"y":76,"wires":[["d4ce9b5b.2b3168"]]},{"id":"d3068670.2cf978","type":"function","z":"414238f1.bebdc8","name":"Valve - Dump to Raintank","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":399.5,"y":223,"wires":[["a086b55d.5f7948"],["82dc183e.7d23e8"]]},{"id":"77203f60.88dfc","type":"link in","z":"414238f1.bebdc8","name":"Rainwater dump valve","links":["effaec39.10051"],"x":190.5,"y":186,"wires":[["d3068670.2cf978"]]},{"id":"d4ce9b5b.2b3168","type":"link out","z":"414238f1.bebdc8","name":"Simulated Main level","links":["4c758c2e.b38a74"],"x":633.5,"y":135,"wires":[]},{"id":"d862afd8.279d5","type":"function","z":"ce14a002.31eb6","name":"halt rain drain","func":"if (msg.payload == true) {\n    msg.payload = false;\n    return msg;\n}else{\n    return null;\n}","outputs":1,"noerr":0,"x":362.5,"y":338,"wires":[["307f2ad4.cf80d6"]]},{"id":"c0dc75b9.3f2388","type":"comment","z":"414238f1.bebdc8","name":"Main tank flows","info":"","x":93.5,"y":27,"wires":[]},{"id":"a65f3752.59a0c8","type":"comment","z":"414238f1.bebdc8","name":"Rain tank flows","info":"","x":112.5,"y":329,"wires":[]},{"id":"82dc183e.7d23e8","type":"function","z":"414238f1.bebdc8","name":"Rain tank","func":"var fill = context.get('fill')||0;\n\nfill = Math.max(Math.min(fill+msg.payload,100),0);\n\ncontext.set('fill',fill);\n\nmsg.payload = Math.round(fill);\nreturn msg;","outputs":1,"noerr":0,"x":579,"y":373,"wires":[["4a951601.b56ae8"]]},{"id":"4a951601.b56ae8","type":"link out","z":"414238f1.bebdc8","name":"Simulated Rain level","links":["5916e501.a6e91c"],"x":671.5,"y":454,"wires":[]},{"id":"4380552a.bc7fac","type":"function","z":"414238f1.bebdc8","name":"Valve - Irrigate","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":367,"y":448,"wires":[["82dc183e.7d23e8"],[]]},{"id":"68659376.979a6c","type":"inject","z":"414238f1.bebdc8","name":"Irrigation Sink","topic":"","payload":"-6","payloadType":"num","repeat":"1","crontab":"","once":false,"x":132.5,"y":448,"wires":[["4380552a.bc7fac"]]},{"id":"621ac9f6.9de538","type":"link in","z":"948b214b.6b74e","name":"Rain water level","links":["3b1751b2.c4e8ae"],"x":169.5,"y":108,"wires":[["a1f727.ff5e08d8","d0a2afd9.2f5d5","da81186f.257ee8"]]},{"id":"da81186f.257ee8","type":"function","z":"948b214b.6b74e","name":"Schmitt trigger","func":"// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 80;\nconst offThreshold = 70;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = msg.payload = true;\n}\nelse if ((level < offThreshold) && myState) {\n    myState = msg.payload = false;\n}\nelse {\n    msg = null;\n}\n\ncontext.set('myState',myState);\nreturn msg;","outputs":1,"noerr":0,"x":422.5,"y":162,"wires":[["9d42ede7.62bd1"]]},{"id":"9d42ede7.62bd1","type":"ui_switch","z":"948b214b.6b74e","name":"","label":"Irrigate","group":"c80996e.f37f668","order":2,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"isOn","style":"","onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":427.5,"y":225,"wires":[["de69ace1.21965"]]},{"id":"ffd9e8f.f002618","type":"ui_switch","z":"948b214b.6b74e","name":"","label":"Low water ALARM!","group":"c80996e.f37f668","order":3,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"","style":"","onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":198.5,"y":286,"wires":[["d59e229c.2a61e","b398a8ce.4c6758"]]},{"id":"d0a2afd9.2f5d5","type":"function","z":"948b214b.6b74e","name":"Schmitt trigger","func":"// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 25;\nconst offThreshold = 20;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = true;\n} else if ((level < offThreshold) && myState) {\n    myState = false;\n} else {\n    return null;\n}\n\ncontext.set('myState',myState);\n\n// invert the output cos it's a LOW level alert\nmsg.payload = !myState;\nmsg.data = level;\nreturn msg;","outputs":1,"noerr":0,"x":187,"y":245,"wires":[["ffd9e8f.f002618"]]},{"id":"d59e229c.2a61e","type":"function","z":"948b214b.6b74e","name":"halt irrigation","func":"if (msg.payload == true) {\n    msg.payload = false;\n    return msg;\n}else{\n    return null;\n}","outputs":1,"noerr":0,"x":435.5,"y":295,"wires":[["9d42ede7.62bd1"]]},{"id":"6da70451.9258fc","type":"link in","z":"414238f1.bebdc8","name":"Master irrigation valve","links":["de69ace1.21965"],"x":193.5,"y":508,"wires":[["4380552a.bc7fac"]]},{"id":"de69ace1.21965","type":"link out","z":"948b214b.6b74e","name":"Master Irrigation switch","links":["6da70451.9258fc"],"x":544.5,"y":227,"wires":[]},{"id":"e1e004a6.1e1ff8","type":"function","z":"414238f1.bebdc8","name":"Rain","func":"\nreturn msg;","outputs":1,"noerr":0,"x":335.5,"y":374,"wires":[["82dc183e.7d23e8"]]},{"id":"43b7802e.bc488","type":"link in","z":"414238f1.bebdc8","name":"Rain in","links":["11e4ba72.ee1b46","1e3184d6.e1ce7b"],"x":141.5,"y":376,"wires":[["e1e004a6.1e1ff8"]]},{"id":"dfeaf7c9.201508","type":"e-mail","z":"2f93ead9.d06c16","server":"smtp.gmail.com","port":"465","secure":true,"name":"54eni77pmz@pomail.net","dname":"Send to Pushover","x":580,"y":98,"wires":[]},{"id":"eaabe517.155418","type":"link in","z":"2f93ead9.d06c16","name":"Send Notification","links":["61f02dcd.9e0fd4","db55d4dd.24aa28"],"x":154.5,"y":92,"wires":[["da91907d.256e7","5d2ac95c.a2d538"]]},{"id":"a15c55b9.5ea3a8","type":"comment","z":"2f93ead9.d06c16","name":"Notifications","info":"","x":102.5,"y":40,"wires":[]},{"id":"61f02dcd.9e0fd4","type":"link out","z":"948b214b.6b74e","name":"Post alert msg","links":["eaabe517.155418"],"x":366.5,"y":425,"wires":[]},{"id":"af3a52af.50c5b","type":"function","z":"ce14a002.31eb6","name":"Alert Msg","func":"if (msg.payload === true) {\n    \n    // topic will go into the subject line of an email alert\n    msg.topic = \"Low water alert\";\n    // payload will go into the body\n    msg.payload = \"The Main tank is running low (\" + msg.data +'%)';\n\n    return msg;\n}\n\nreturn null;","outputs":1,"noerr":0,"x":232,"y":396,"wires":[["db55d4dd.24aa28"]]},{"id":"db55d4dd.24aa28","type":"link out","z":"ce14a002.31eb6","name":"Send an Alert","links":["eaabe517.155418"],"x":374.5,"y":442,"wires":[]},{"id":"fa850761.057af8","type":"inject","z":"2f93ead9.d06c16","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":149.5,"y":711,"wires":[["46e0e625.b91f18"]]},{"id":"46e0e625.b91f18","type":"function","z":"2f93ead9.d06c16","name":"Get AD0","func":"// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"D0\",\n  \tdestination64: \"0013A20040C456D3\",\n\tremoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;","outputs":1,"noerr":0,"x":309.5,"y":710,"wires":[["43a85f53.58dfb"]]},{"id":"e5b4bbe2.1a4b48","type":"function","z":"2f93ead9.d06c16","name":"Get Firmware Version","func":"// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;g;","outputs":1,"noerr":0,"x":308.5,"y":766,"wires":[["43a85f53.58dfb"]]},{"id":"fcd92680.0326d8","type":"inject","z":"2f93ead9.d06c16","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":149.5,"y":825,"wires":[["bea83a04.4157c8"]]},{"id":"bea83a04.4157c8","type":"function","z":"2f93ead9.d06c16","name":"Get NodeID","func":"// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"NI\",\n  \tdestination64: \"FFFE\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;","outputs":1,"noerr":0,"x":318.5,"y":825,"wires":[["43a85f53.58dfb"]]},{"id":"5647011e.a9b9","type":"switch","z":"2f93ead9.d06c16","name":"msg.type","property":"payload.type","propertyType":"msg","rules":[{"t":"eq","v":"0x92","vt":"num"},{"t":"eq","v":"0x88","vt":"num"}],"checkall":"false","outputs":2,"x":164.5,"y":424,"wires":[["ff920d24.006df"],[]]},{"id":"ff920d24.006df","type":"switch","z":"2f93ead9.d06c16","name":"ADIO.remote64","property":"payload.remote64","propertyType":"msg","rules":[{"t":"eq","v":"0013a20040a9ddf8","vt":"str"},{"t":"eq","v":"0013a20040b7b1fd","vt":"str"}],"checkall":"false","outputs":2,"x":335.5,"y":381,"wires":[["72f6d63c.8d0928"],["c626c597.39d938"]]},{"id":"72f6d63c.8d0928","type":"change","z":"2f93ead9.d06c16","name":"Main.AD1","rules":[{"t":"move","p":"payload.analogSamples.AD1","pt":"msg","to":"payload","tot":"msg"}],"action":"","property":"","from":"","to":"","reg":false,"x":375.5,"y":338,"wires":[["f26a1de2.0d95e","22ba91a.b78626e"]]},{"id":"c626c597.39d938","type":"change","z":"2f93ead9.d06c16","name":"Rain.AD1","rules":[{"t":"move","p":"payload.analogSamples.AD1","pt":"msg","to":"payload","tot":"msg"}],"action":"","property":"","from":"","to":"","reg":false,"x":374,"y":426,"wires":[["2cb39bc9.d34c64","22ba91a.b78626e"]]},{"id":"f26a1de2.0d95e","type":"link out","z":"2f93ead9.d06c16","name":"Main ADC out","links":["7e8ab1f8.81755"],"x":495.5,"y":338,"wires":[]},{"id":"2cb39bc9.d34c64","type":"link out","z":"2f93ead9.d06c16","name":"Rain ADC out","links":["ea27ba5a.15d848"],"x":495.5,"y":425,"wires":[]},{"id":"9378ea14.6c8718","type":"link out","z":"ce14a002.31eb6","name":"Main % fill","links":["70f37b21.8f0c84"],"x":545,"y":596,"wires":[]},{"id":"235e11c7.dca1ee","type":"function","z":"ce14a002.31eb6","name":"ADC to cm","func":"//calibration of sensor\nvar k = 0.41;\nvar sample = msg.payload;\n\nmsg.payload = Math.round(k * sample);\n//msg.topic = 'cm'\nreturn msg;\n","outputs":1,"noerr":0,"x":365.5,"y":549,"wires":[["6e6eb374.91914c"]]},{"id":"6e6eb374.91914c","type":"function","z":"ce14a002.31eb6","name":"cm to %full","func":"// cm tanks levels\nvar empty = 300;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n","outputs":1,"noerr":0,"x":365.5,"y":595,"wires":[["9378ea14.6c8718"]]},{"id":"7e8ab1f8.81755","type":"link in","z":"ce14a002.31eb6","name":"Main ADC in","links":["f26a1de2.0d95e"],"x":141,"y":548,"wires":[["235e11c7.dca1ee"]]},{"id":"fb99740c.046688","type":"link out","z":"948b214b.6b74e","name":"Rain % fill","links":["a0f35b9b.5f0ca8"],"x":510,"y":594,"wires":[]},{"id":"b9476527.46b898","type":"function","z":"948b214b.6b74e","name":"ADC to cm","func":"//calibration of sensor\nvar k = 0.41;\nvar sample = msg.payload;\n\nmsg.payload = Math.round(k * sample);\n//msg.topic = 'cm'\nreturn msg;\n","outputs":1,"noerr":0,"x":353.5,"y":548,"wires":[["63a987fc.9c5678"]]},{"id":"63a987fc.9c5678","type":"function","z":"948b214b.6b74e","name":"cm to %full","func":"// cm tanks levels\nvar empty = 500;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n","outputs":1,"noerr":0,"x":353.5,"y":594,"wires":[["fb99740c.046688"]]},{"id":"ea27ba5a.15d848","type":"link in","z":"948b214b.6b74e","name":"Rain ADC in","links":["2cb39bc9.d34c64"],"x":181,"y":545,"wires":[["b9476527.46b898"]]},{"id":"a34709a1.5cb8f8","type":"comment","z":"2f93ead9.d06c16","name":"incoming","info":"","x":76.5,"y":298,"wires":[]},{"id":"c13a6a86.3ec598","type":"comment","z":"2f93ead9.d06c16","name":"outgoing","info":"","x":77.5,"y":660,"wires":[]},{"id":"da91907d.256e7","type":"debug","z":"2f93ead9.d06c16","name":"","active":true,"console":"false","complete":"payload","x":309.5,"y":51,"wires":[]},{"id":"de8dbd5e.21724","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 1:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":332.5,"y":87,"wires":[["aba6d704.545928"],[]]},{"id":"aba6d704.545928","type":"link out","z":"7f4ce2c1.80b31c","name":"switched main level","links":["d604f102.29fb1","5fd4d498.a02b2c"],"x":579.5,"y":162,"wires":[]},{"id":"70f37b21.8f0c84","type":"link in","z":"7f4ce2c1.80b31c","name":"Real Main level","links":["9378ea14.6c8718"],"x":172.5,"y":86,"wires":[["de8dbd5e.21724"]]},{"id":"8603bb8f.79fc48","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 3:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":333.5,"y":238,"wires":[["aba6d704.545928"],[]]},{"id":"4c758c2e.b38a74","type":"link in","z":"7f4ce2c1.80b31c","name":"Simulated Main level","links":["d4ce9b5b.2b3168"],"x":178.5,"y":238,"wires":[["8603bb8f.79fc48"]]},{"id":"1ee4445a.e11bbc","type":"debug","z":"7f4ce2c1.80b31c","name":"","active":false,"console":"false","complete":"payload","x":591.5,"y":339,"wires":[]},{"id":"d604f102.29fb1","type":"link in","z":"7f4ce2c1.80b31c","name":"","links":["aba6d704.545928"],"x":483.5,"y":275,"wires":[["1ee4445a.e11bbc"]]},{"id":"ad4eee79.52b11","type":"function","z":"414238f1.bebdc8","name":"Sine generator","func":"var angle = context.get('angle')||0;\n\nmsg.payload = (1 + Math.sin(angle))/2;\n\nangle += 10 * Math.PI / 180;\n\ncontext.set('angle',angle);\nreturn msg;","outputs":1,"noerr":0,"x":341.5,"y":648,"wires":[["9f5fd750.60a028","1e3184d6.e1ce7b"]]},{"id":"325c2921.cda3d6","type":"inject","z":"414238f1.bebdc8","name":"","topic":"","payload":"","payloadType":"date","repeat":"1","crontab":"","once":false,"x":144.5,"y":648,"wires":[["ad4eee79.52b11"]]},{"id":"9f5fd750.60a028","type":"function","z":"414238f1.bebdc8","name":"sine to ADC","func":"msg.payload = Math.round(1024 * msg.payload);\nreturn msg;","outputs":1,"noerr":0,"x":332.5,"y":695,"wires":[["a5953aee.5a6ac8"]]},{"id":"ecef1ba3.1310e8","type":"comment","z":"414238f1.bebdc8","name":"Sinewave","info":"","x":91,"y":596,"wires":[]},{"id":"1e3184d6.e1ce7b","type":"link out","z":"414238f1.bebdc8","name":"sine function","links":["43b7802e.bc488"],"x":551,"y":645,"wires":[]},{"id":"a5953aee.5a6ac8","type":"link out","z":"414238f1.bebdc8","name":"Sinusoidal ADC","links":[],"x":553,"y":694,"wires":[]},{"id":"2bc11dd0.d43ee2","type":"ui_switch","z":"2f93ead9.d06c16","name":"","label":"notifications","group":"3f2c84b1.c0d37c","order":3,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"isOn","style":"","onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":257.5,"y":226,"wires":[["5d2ac95c.a2d538"]]},{"id":"5d2ac95c.a2d538","type":"function","z":"2f93ead9.d06c16","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":415.5,"y":141,"wires":[["dfeaf7c9.201508"],[]]},{"id":"ba9fcfbc.45603","type":"inject","z":"2f93ead9.d06c16","name":"init","topic":"isOn","payload":"false","payloadType":"bool","repeat":"","crontab":"","once":true,"x":102,"y":161,"wires":[["2bc11dd0.d43ee2","5d2ac95c.a2d538"]]},{"id":"1467c9d.feb9836","type":"ui_dropdown","z":"7f4ce2c1.80b31c","name":"","label":"Source","group":"57c74e51.8108f8","order":1,"width":"0","height":"0","passthru":true,"options":[{"label":"Measured","value":1,"type":"num"},{"label":"Manual","value":2,"type":"num"},{"label":"Simulation","value":3,"type":"num"}],"payload":"","topic":"isOn","x":316.5,"y":342,"wires":[["de8dbd5e.21724","d543dcc8.2abc2","8603bb8f.79fc48"]]},{"id":"a8c2763c.573d88","type":"inject","z":"7f4ce2c1.80b31c","name":"init","topic":"","payload":"3","payloadType":"num","repeat":"","crontab":"","once":true,"x":110,"y":367,"wires":[["1467c9d.feb9836","c5500b90.3aaff8"]]},{"id":"883eadd4.77c15","type":"ui_slider","z":"7f4ce2c1.80b31c","name":"","label":"Level","group":"57c74e51.8108f8","order":2,"width":0,"height":0,"passthru":false,"topic":"","min":0,"max":"100","step":1,"x":101,"y":168,"wires":[["d543dcc8.2abc2"]]},{"id":"d543dcc8.2abc2","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 2:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":316.5,"y":169,"wires":[["aba6d704.545928"],[]]},{"id":"b398a8ce.4c6758","type":"function","z":"948b214b.6b74e","name":"Alert Msg","func":"if (msg.payload === true) {\n    \n    // topic will go into the subject line of an email alert\n    msg.topic = \"Low water alert\";\n    // payload will go into the body\n    msg.payload = \"The Main tank is running low (\" + msg.data +'%)';\n\n    return msg;\n}\n\nreturn null;","outputs":1,"noerr":0,"x":237,"y":425,"wires":[["61f02dcd.9e0fd4"]]},{"id":"82e026ed.7d1fd8","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 1:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":327.5,"y":505,"wires":[["3b1751b2.c4e8ae"],[]]},{"id":"3b1751b2.c4e8ae","type":"link out","z":"7f4ce2c1.80b31c","name":"switched rain level","links":["621ac9f6.9de538","e680cf96.197f3"],"x":574.5,"y":580,"wires":[]},{"id":"a0f35b9b.5f0ca8","type":"link in","z":"7f4ce2c1.80b31c","name":"Rain % fill","links":["fb99740c.046688"],"x":167.5,"y":504,"wires":[["82e026ed.7d1fd8"]]},{"id":"4bd01d12.b42fe4","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 3:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":328.5,"y":656,"wires":[["3b1751b2.c4e8ae"],[]]},{"id":"5916e501.a6e91c","type":"link in","z":"7f4ce2c1.80b31c","name":"Simulated Main level","links":["4a951601.b56ae8"],"x":173.5,"y":656,"wires":[["4bd01d12.b42fe4"]]},{"id":"7a1cd748.85e328","type":"debug","z":"7f4ce2c1.80b31c","name":"","active":false,"console":"false","complete":"payload","x":586.5,"y":757,"wires":[]},{"id":"e680cf96.197f3","type":"link in","z":"7f4ce2c1.80b31c","name":"","links":["3b1751b2.c4e8ae"],"x":478.5,"y":693,"wires":[["7a1cd748.85e328"]]},{"id":"c5500b90.3aaff8","type":"ui_dropdown","z":"7f4ce2c1.80b31c","name":"","label":"Source","group":"95c34752.a45b58","order":1,"width":"0","height":"0","passthru":true,"options":[{"label":"Measured","value":1,"type":"num"},{"label":"Manual","value":2,"type":"num"},{"label":"Simulation","value":3,"type":"num"}],"payload":"","topic":"isOn","x":315.5,"y":399,"wires":[["82e026ed.7d1fd8","e6608b4c.199f78","4bd01d12.b42fe4"]]},{"id":"7793ed29.886c14","type":"ui_slider","z":"7f4ce2c1.80b31c","name":"","label":"Level","group":"95c34752.a45b58","order":2,"width":0,"height":0,"passthru":false,"topic":"","min":0,"max":"100","step":1,"x":96,"y":586,"wires":[["e6608b4c.199f78"]]},{"id":"e6608b4c.199f78","type":"function","z":"7f4ce2c1.80b31c","name":"Valve","func":"// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 2:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;","outputs":"2","noerr":0,"x":311.5,"y":587,"wires":[["3b1751b2.c4e8ae"],[]]},{"id":"22ba91a.b78626e","type":"debug","z":"2f93ead9.d06c16","name":"","active":true,"console":"false","complete":"false","x":567,"y":382,"wires":[]},{"id":"69a72df6.1476a4","type":"xbee-tx","z":"2f93ead9.d06c16","name":"","xBee":"825a1462.864af","x":620,"y":831,"wires":[]},{"id":"43a85f53.58dfb","type":"function","z":"2f93ead9.d06c16","name":"","func":"\nreturn msg;","outputs":1,"noerr":0,"x":509,"y":771,"wires":[["69a72df6.1476a4"]]},{"id":"4025a5fb.f91214","type":"xbee-rx","z":"2f93ead9.d06c16","name":"","xBee":"825a1462.864af","x":93,"y":358,"wires":[["5647011e.a9b9","ba665aa4.f31438"]]},{"id":"ba665aa4.f31438","type":"debug","z":"2f93ead9.d06c16","name":"","active":false,"console":"false","complete":"false","x":319,"y":519,"wires":[]},{"id":"8244bf7f.9c7798","type":"inject","z":"2f93ead9.d06c16","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":129,"y":767,"wires":[["e5b4bbe2.1a4b48"]]}]
+[
+    {
+        "id": "ce14a002.31eb6",
+        "type": "tab",
+        "label": "Main tank"
+    },
+    {
+        "id": "948b214b.6b74e",
+        "type": "tab",
+        "label": "Rain tank"
+    },
+    {
+        "id": "2f93ead9.d06c16",
+        "type": "tab",
+        "label": "I/O"
+    },
+    {
+        "id": "414238f1.bebdc8",
+        "type": "tab",
+        "label": "Simulation"
+    },
+    {
+        "id": "7f4ce2c1.80b31c",
+        "type": "tab",
+        "label": "Routing"
+    },
+    {
+        "id": "cfadb3a3.30525",
+        "type": "tab",
+        "label": "Flow 2"
+    },
+    {
+        "id": "c2e924f0.3d16d8",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "Helvetica Neue",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "Helvetica Neue"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#000000",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "3ff23924.c00dc6",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Summary",
+        "icon": "dashboard",
+        "order": 1
+    },
+    {
+        "id": "16b57cf4.e94a83",
+        "type": "ui_group",
+        "z": "",
+        "name": "Main Tank",
+        "tab": "3ff23924.c00dc6",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "c80996e.f37f668",
+        "type": "ui_group",
+        "z": "",
+        "name": "Rain Tank",
+        "tab": "3ff23924.c00dc6",
+        "order": 2,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "c97abe4.f36854",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyUSB0",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "50",
+        "bin": "false",
+        "out": "time",
+        "addchar": false
+    },
+    {
+        "id": "65cd83bd.9a327c",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Settings",
+        "icon": "dashboard",
+        "order": 2
+    },
+    {
+        "id": "3f2c84b1.c0d37c",
+        "type": "ui_group",
+        "z": "",
+        "name": "Test",
+        "tab": "65cd83bd.9a327c",
+        "order": 3,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "fc2a2add.7bd128",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyS0",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "825a1462.864af",
+        "type": "xbee-config",
+        "z": "",
+        "apiMode": "1",
+        "rawFrames": false,
+        "convertAdc": true,
+        "vrefAdc": "1200",
+        "serialPort": "/dev/ttyS0",
+        "lock": false,
+        "baudRate": "115200",
+        "dataBits": "8",
+        "stopBits": "1",
+        "parity": "none",
+        "bufferSize": "65536",
+        "rtscts": false,
+        "xon": false,
+        "xoff": false,
+        "xany": false,
+        "vmin": "1",
+        "vtime": "0"
+    },
+    {
+        "id": "57c74e51.8108f8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Main Tank",
+        "tab": "65cd83bd.9a327c",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "95c34752.a45b58",
+        "type": "ui_group",
+        "z": "",
+        "name": "Rain Tank",
+        "tab": "65cd83bd.9a327c",
+        "order": 2,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "97bd4f7b.6842b",
+        "type": "ui_gauge",
+        "z": "ce14a002.31eb6",
+        "name": "",
+        "group": "16b57cf4.e94a83",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "wave",
+        "title": "",
+        "label": "%",
+        "format": "{{value}}\"%\"",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00B500",
+            "#E6E600",
+            "#CA3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 401.5,
+        "y": 45,
+        "wires": []
+    },
+    {
+        "id": "1d20266f.e2dfda",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "Schmitt trigger",
+        "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 80;\nconst offThreshold = 70;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = msg.payload = true;\n}\nelse if ((level < offThreshold) && myState) {\n    myState = msg.payload = false;\n}\nelse {\n    msg = null;\n}\n\ncontext.set('myState',myState);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 440.5,
+        "y": 127,
+        "wires": [
+            [
+                "307f2ad4.cf80d6"
+            ]
+        ]
+    },
+    {
+        "id": "307f2ad4.cf80d6",
+        "type": "ui_switch",
+        "z": "ce14a002.31eb6",
+        "name": "",
+        "label": "Dump to Rain tank",
+        "group": "16b57cf4.e94a83",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "isOn",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 447.5,
+        "y": 169,
+        "wires": [
+            [
+                "effaec39.10051"
+            ]
+        ]
+    },
+    {
+        "id": "57cbbac3.a83444",
+        "type": "ui_switch",
+        "z": "ce14a002.31eb6",
+        "name": "",
+        "label": "Low water ALARM!",
+        "group": "16b57cf4.e94a83",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 188.5,
+        "y": 230,
+        "wires": [
+            [
+                "d862afd8.279d5",
+                "af3a52af.50c5b"
+            ]
+        ]
+    },
+    {
+        "id": "4951d9d9.b6ae28",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "Schmitt trigger",
+        "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 55;\nconst offThreshold = 50;\n\nvar myState = context.get('myState')||false;\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = true;\n} else if ((level < offThreshold) && myState) {\n    myState = false;\n} else {\n    return null;\n}\n\ncontext.set('myState',myState);\n\n// invert the output cos it's a LOW level alert\nmsg.payload = !myState;\nmsg.data = level;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 177,
+        "y": 189,
+        "wires": [
+            [
+                "57cbbac3.a83444"
+            ]
+        ]
+    },
+    {
+        "id": "5fd4d498.a02b2c",
+        "type": "link in",
+        "z": "ce14a002.31eb6",
+        "name": "Main tank level",
+        "links": [
+            "aba6d704.545928"
+        ],
+        "x": 174.5,
+        "y": 55,
+        "wires": [
+            [
+                "4951d9d9.b6ae28",
+                "1d20266f.e2dfda",
+                "97bd4f7b.6842b"
+            ]
+        ]
+    },
+    {
+        "id": "effaec39.10051",
+        "type": "link out",
+        "z": "ce14a002.31eb6",
+        "name": "Rainwater dump switch",
+        "links": [
+            "77203f60.88dfc"
+        ],
+        "x": 502.5,
+        "y": 245,
+        "wires": []
+    },
+    {
+        "id": "a1f727.ff5e08d8",
+        "type": "ui_gauge",
+        "z": "948b214b.6b74e",
+        "name": "",
+        "group": "c80996e.f37f668",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "wave",
+        "title": "",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00B500",
+            "#E6E600",
+            "#CA3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 380,
+        "y": 96,
+        "wires": []
+    },
+    {
+        "id": "28e68301.d7197c",
+        "type": "inject",
+        "z": "414238f1.bebdc8",
+        "name": "Council water source",
+        "topic": "",
+        "payload": "4",
+        "payloadType": "num",
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "x": 141.5,
+        "y": 77,
+        "wires": [
+            [
+                "a086b55d.5f7948"
+            ]
+        ]
+    },
+    {
+        "id": "7f1ee5f3.80e11c",
+        "type": "inject",
+        "z": "414238f1.bebdc8",
+        "name": "Rainwater Diversion sink",
+        "topic": "",
+        "payload": "-10",
+        "payloadType": "num",
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "x": 151.5,
+        "y": 131,
+        "wires": [
+            [
+                "d3068670.2cf978"
+            ]
+        ]
+    },
+    {
+        "id": "a086b55d.5f7948",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Main tank",
+        "func": "var fill = context.get('fill')||0;\n\nfill = Math.max(Math.min(fill+msg.payload,100),0);\n\ncontext.set('fill',fill);\n\nmsg.payload = Math.round(fill);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 580,
+        "y": 76,
+        "wires": [
+            [
+                "d4ce9b5b.2b3168"
+            ]
+        ]
+    },
+    {
+        "id": "d3068670.2cf978",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Valve - Dump to Raintank",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 399.5,
+        "y": 223,
+        "wires": [
+            [
+                "a086b55d.5f7948"
+            ],
+            [
+                "82dc183e.7d23e8"
+            ]
+        ]
+    },
+    {
+        "id": "77203f60.88dfc",
+        "type": "link in",
+        "z": "414238f1.bebdc8",
+        "name": "Rainwater dump valve",
+        "links": [
+            "effaec39.10051"
+        ],
+        "x": 190.5,
+        "y": 186,
+        "wires": [
+            [
+                "d3068670.2cf978"
+            ]
+        ]
+    },
+    {
+        "id": "d4ce9b5b.2b3168",
+        "type": "link out",
+        "z": "414238f1.bebdc8",
+        "name": "Simulated Main level",
+        "links": [
+            "4c758c2e.b38a74"
+        ],
+        "x": 633.5,
+        "y": 135,
+        "wires": []
+    },
+    {
+        "id": "d862afd8.279d5",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "halt rain drain",
+        "func": "if (msg.payload == true) {\n    msg.payload = false;\n    return msg;\n}else{\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 362.5,
+        "y": 338,
+        "wires": [
+            [
+                "307f2ad4.cf80d6"
+            ]
+        ]
+    },
+    {
+        "id": "c0dc75b9.3f2388",
+        "type": "comment",
+        "z": "414238f1.bebdc8",
+        "name": "Main tank flows",
+        "info": "",
+        "x": 93.5,
+        "y": 27,
+        "wires": []
+    },
+    {
+        "id": "a65f3752.59a0c8",
+        "type": "comment",
+        "z": "414238f1.bebdc8",
+        "name": "Rain tank flows",
+        "info": "",
+        "x": 112.5,
+        "y": 329,
+        "wires": []
+    },
+    {
+        "id": "82dc183e.7d23e8",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Rain tank",
+        "func": "var fill = context.get('fill')||0;\n\nfill = Math.max(Math.min(fill+msg.payload,100),0);\n\ncontext.set('fill',fill);\n\nmsg.payload = Math.round(fill);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 579,
+        "y": 373,
+        "wires": [
+            [
+                "4a951601.b56ae8"
+            ]
+        ]
+    },
+    {
+        "id": "4a951601.b56ae8",
+        "type": "link out",
+        "z": "414238f1.bebdc8",
+        "name": "Simulated Rain level",
+        "links": [
+            "5916e501.a6e91c"
+        ],
+        "x": 671.5,
+        "y": 454,
+        "wires": []
+    },
+    {
+        "id": "4380552a.bc7fac",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Valve - Irrigate",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 367,
+        "y": 448,
+        "wires": [
+            [
+                "82dc183e.7d23e8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "68659376.979a6c",
+        "type": "inject",
+        "z": "414238f1.bebdc8",
+        "name": "Irrigation Sink",
+        "topic": "",
+        "payload": "-6",
+        "payloadType": "num",
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "x": 132.5,
+        "y": 448,
+        "wires": [
+            [
+                "4380552a.bc7fac"
+            ]
+        ]
+    },
+    {
+        "id": "621ac9f6.9de538",
+        "type": "link in",
+        "z": "948b214b.6b74e",
+        "name": "Rain water level",
+        "links": [
+            "3b1751b2.c4e8ae"
+        ],
+        "x": 169.5,
+        "y": 108,
+        "wires": [
+            [
+                "a1f727.ff5e08d8",
+                "d0a2afd9.2f5d5",
+                "da81186f.257ee8"
+            ]
+        ]
+    },
+    {
+        "id": "da81186f.257ee8",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "Schmitt trigger",
+        "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 80;\nconst offThreshold = 70;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = msg.payload = true;\n}\nelse if ((level < offThreshold) && myState) {\n    myState = msg.payload = false;\n}\nelse {\n    msg = null;\n}\n\ncontext.set('myState',myState);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 422.5,
+        "y": 162,
+        "wires": [
+            [
+                "9d42ede7.62bd1"
+            ]
+        ]
+    },
+    {
+        "id": "9d42ede7.62bd1",
+        "type": "ui_switch",
+        "z": "948b214b.6b74e",
+        "name": "",
+        "label": "Irrigate",
+        "group": "c80996e.f37f668",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "isOn",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 427.5,
+        "y": 225,
+        "wires": [
+            [
+                "de69ace1.21965"
+            ]
+        ]
+    },
+    {
+        "id": "ffd9e8f.f002618",
+        "type": "ui_switch",
+        "z": "948b214b.6b74e",
+        "name": "",
+        "label": "Low water ALARM!",
+        "group": "c80996e.f37f668",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 198.5,
+        "y": 286,
+        "wires": [
+            [
+                "d59e229c.2a61e",
+                "b398a8ce.4c6758"
+            ]
+        ]
+    },
+    {
+        "id": "d0a2afd9.2f5d5",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "Schmitt trigger",
+        "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 25;\nconst offThreshold = 20;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = true;\n} else if ((level < offThreshold) && myState) {\n    myState = false;\n} else {\n    return null;\n}\n\ncontext.set('myState',myState);\n\n// invert the output cos it's a LOW level alert\nmsg.payload = !myState;\nmsg.data = level;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 187,
+        "y": 245,
+        "wires": [
+            [
+                "ffd9e8f.f002618"
+            ]
+        ]
+    },
+    {
+        "id": "d59e229c.2a61e",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "halt irrigation",
+        "func": "if (msg.payload == true) {\n    msg.payload = false;\n    return msg;\n}else{\n    return null;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 435.5,
+        "y": 295,
+        "wires": [
+            [
+                "9d42ede7.62bd1"
+            ]
+        ]
+    },
+    {
+        "id": "6da70451.9258fc",
+        "type": "link in",
+        "z": "414238f1.bebdc8",
+        "name": "Master irrigation valve",
+        "links": [
+            "de69ace1.21965"
+        ],
+        "x": 193.5,
+        "y": 508,
+        "wires": [
+            [
+                "4380552a.bc7fac"
+            ]
+        ]
+    },
+    {
+        "id": "de69ace1.21965",
+        "type": "link out",
+        "z": "948b214b.6b74e",
+        "name": "Master Irrigation switch",
+        "links": [
+            "6da70451.9258fc"
+        ],
+        "x": 544.5,
+        "y": 227,
+        "wires": []
+    },
+    {
+        "id": "e1e004a6.1e1ff8",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Rain",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 335.5,
+        "y": 374,
+        "wires": [
+            [
+                "82dc183e.7d23e8"
+            ]
+        ]
+    },
+    {
+        "id": "43b7802e.bc488",
+        "type": "link in",
+        "z": "414238f1.bebdc8",
+        "name": "Rain in",
+        "links": [
+            "11e4ba72.ee1b46",
+            "1e3184d6.e1ce7b"
+        ],
+        "x": 141.5,
+        "y": 376,
+        "wires": [
+            [
+                "e1e004a6.1e1ff8"
+            ]
+        ]
+    },
+    {
+        "id": "dfeaf7c9.201508",
+        "type": "e-mail",
+        "z": "2f93ead9.d06c16",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "54eni77pmz@pomail.net",
+        "dname": "Send to Pushover",
+        "x": 580,
+        "y": 98,
+        "wires": []
+    },
+    {
+        "id": "eaabe517.155418",
+        "type": "link in",
+        "z": "2f93ead9.d06c16",
+        "name": "Send Notification",
+        "links": [
+            "61f02dcd.9e0fd4",
+            "db55d4dd.24aa28"
+        ],
+        "x": 154.5,
+        "y": 92,
+        "wires": [
+            [
+                "da91907d.256e7",
+                "5d2ac95c.a2d538"
+            ]
+        ]
+    },
+    {
+        "id": "a15c55b9.5ea3a8",
+        "type": "comment",
+        "z": "2f93ead9.d06c16",
+        "name": "Notifications",
+        "info": "",
+        "x": 102.5,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "61f02dcd.9e0fd4",
+        "type": "link out",
+        "z": "948b214b.6b74e",
+        "name": "Post alert msg",
+        "links": [
+            "eaabe517.155418"
+        ],
+        "x": 366.5,
+        "y": 425,
+        "wires": []
+    },
+    {
+        "id": "af3a52af.50c5b",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "Alert Msg",
+        "func": "if (msg.payload === true) {\n    \n    // topic will go into the subject line of an email alert\n    msg.topic = \"Low water alert\";\n    // payload will go into the body\n    msg.payload = \"The Main tank is running low (\" + msg.data +'%)';\n\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 232,
+        "y": 396,
+        "wires": [
+            [
+                "db55d4dd.24aa28"
+            ]
+        ]
+    },
+    {
+        "id": "db55d4dd.24aa28",
+        "type": "link out",
+        "z": "ce14a002.31eb6",
+        "name": "Send an Alert",
+        "links": [
+            "eaabe517.155418"
+        ],
+        "x": 374.5,
+        "y": 442,
+        "wires": []
+    },
+    {
+        "id": "fa850761.057af8",
+        "type": "inject",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 149.5,
+        "y": 711,
+        "wires": [
+            [
+                "46e0e625.b91f18"
+            ]
+        ]
+    },
+    {
+        "id": "46e0e625.b91f18",
+        "type": "function",
+        "z": "2f93ead9.d06c16",
+        "name": "Get AD0",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"D0\",\n  \tdestination64: \"0013A20040C456D3\",\n\tremoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 309.5,
+        "y": 710,
+        "wires": [
+            [
+                "43a85f53.58dfb"
+            ]
+        ]
+    },
+    {
+        "id": "e5b4bbe2.1a4b48",
+        "type": "function",
+        "z": "2f93ead9.d06c16",
+        "name": "Get Firmware Version",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;g;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 308.5,
+        "y": 766,
+        "wires": [
+            [
+                "43a85f53.58dfb"
+            ]
+        ]
+    },
+    {
+        "id": "fcd92680.0326d8",
+        "type": "inject",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 149.5,
+        "y": 825,
+        "wires": [
+            [
+                "bea83a04.4157c8"
+            ]
+        ]
+    },
+    {
+        "id": "bea83a04.4157c8",
+        "type": "function",
+        "z": "2f93ead9.d06c16",
+        "name": "Get NodeID",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"NI\",\n  \tdestination64: \"FFFE\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 318.5,
+        "y": 825,
+        "wires": [
+            [
+                "43a85f53.58dfb"
+            ]
+        ]
+    },
+    {
+        "id": "5647011e.a9b9",
+        "type": "switch",
+        "z": "2f93ead9.d06c16",
+        "name": "msg.type",
+        "property": "payload.type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0x92",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "0x88",
+                "vt": "num"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 2,
+        "x": 164.5,
+        "y": 424,
+        "wires": [
+            [
+                "ff920d24.006df"
+            ],
+            [
+                "ba665aa4.f31438"
+            ]
+        ]
+    },
+    {
+        "id": "ff920d24.006df",
+        "type": "switch",
+        "z": "2f93ead9.d06c16",
+        "name": "ADIO.remote64",
+        "property": "payload.remote64",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0013a20040a9ddf8",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0013a20040b7b1fd",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 2,
+        "x": 335.5,
+        "y": 381,
+        "wires": [
+            [
+                "72f6d63c.8d0928"
+            ],
+            [
+                "c626c597.39d938"
+            ]
+        ]
+    },
+    {
+        "id": "72f6d63c.8d0928",
+        "type": "change",
+        "z": "2f93ead9.d06c16",
+        "name": "Main.AD1",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.analogSamples.AD1",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 375.5,
+        "y": 338,
+        "wires": [
+            [
+                "f26a1de2.0d95e",
+                "22ba91a.b78626e"
+            ]
+        ]
+    },
+    {
+        "id": "c626c597.39d938",
+        "type": "change",
+        "z": "2f93ead9.d06c16",
+        "name": "Rain.AD1",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.analogSamples.AD1",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 374,
+        "y": 426,
+        "wires": [
+            [
+                "2cb39bc9.d34c64",
+                "22ba91a.b78626e"
+            ]
+        ]
+    },
+    {
+        "id": "f26a1de2.0d95e",
+        "type": "link out",
+        "z": "2f93ead9.d06c16",
+        "name": "Main ADC out",
+        "links": [
+            "7e8ab1f8.81755"
+        ],
+        "x": 495.5,
+        "y": 338,
+        "wires": []
+    },
+    {
+        "id": "2cb39bc9.d34c64",
+        "type": "link out",
+        "z": "2f93ead9.d06c16",
+        "name": "Rain ADC out",
+        "links": [
+            "ea27ba5a.15d848"
+        ],
+        "x": 495.5,
+        "y": 425,
+        "wires": []
+    },
+    {
+        "id": "9378ea14.6c8718",
+        "type": "link out",
+        "z": "ce14a002.31eb6",
+        "name": "Main % fill",
+        "links": [
+            "70f37b21.8f0c84"
+        ],
+        "x": 545,
+        "y": 596,
+        "wires": []
+    },
+    {
+        "id": "235e11c7.dca1ee",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "ADC to cm",
+        "func": "//calibration of sensor\nvar k = 0.41;\nvar sample = msg.payload;\n\nmsg.payload = Math.round(k * sample);\n//msg.topic = 'cm'\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 365.5,
+        "y": 549,
+        "wires": [
+            [
+                "6e6eb374.91914c"
+            ]
+        ]
+    },
+    {
+        "id": "6e6eb374.91914c",
+        "type": "function",
+        "z": "ce14a002.31eb6",
+        "name": "cm to %full",
+        "func": "// cm tanks levels\nvar empty = 300;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 365.5,
+        "y": 595,
+        "wires": [
+            [
+                "9378ea14.6c8718"
+            ]
+        ]
+    },
+    {
+        "id": "7e8ab1f8.81755",
+        "type": "link in",
+        "z": "ce14a002.31eb6",
+        "name": "Main ADC in",
+        "links": [
+            "f26a1de2.0d95e"
+        ],
+        "x": 141,
+        "y": 548,
+        "wires": [
+            [
+                "235e11c7.dca1ee"
+            ]
+        ]
+    },
+    {
+        "id": "fb99740c.046688",
+        "type": "link out",
+        "z": "948b214b.6b74e",
+        "name": "Rain % fill",
+        "links": [
+            "a0f35b9b.5f0ca8"
+        ],
+        "x": 510,
+        "y": 594,
+        "wires": []
+    },
+    {
+        "id": "b9476527.46b898",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "ADC to cm",
+        "func": "//calibration of sensor\nvar k = 0.41;\nvar sample = msg.payload;\n\nmsg.payload = Math.round(k * sample);\n//msg.topic = 'cm'\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 353.5,
+        "y": 548,
+        "wires": [
+            [
+                "63a987fc.9c5678"
+            ]
+        ]
+    },
+    {
+        "id": "63a987fc.9c5678",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "cm to %full",
+        "func": "// cm tanks levels\nvar empty = 500;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 353.5,
+        "y": 594,
+        "wires": [
+            [
+                "fb99740c.046688"
+            ]
+        ]
+    },
+    {
+        "id": "ea27ba5a.15d848",
+        "type": "link in",
+        "z": "948b214b.6b74e",
+        "name": "Rain ADC in",
+        "links": [
+            "2cb39bc9.d34c64"
+        ],
+        "x": 181,
+        "y": 545,
+        "wires": [
+            [
+                "b9476527.46b898"
+            ]
+        ]
+    },
+    {
+        "id": "a34709a1.5cb8f8",
+        "type": "comment",
+        "z": "2f93ead9.d06c16",
+        "name": "incoming",
+        "info": "",
+        "x": 76.5,
+        "y": 298,
+        "wires": []
+    },
+    {
+        "id": "c13a6a86.3ec598",
+        "type": "comment",
+        "z": "2f93ead9.d06c16",
+        "name": "outgoing",
+        "info": "",
+        "x": 77.5,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "da91907d.256e7",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 309.5,
+        "y": 51,
+        "wires": []
+    },
+    {
+        "id": "de8dbd5e.21724",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 1:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 332.5,
+        "y": 87,
+        "wires": [
+            [
+                "aba6d704.545928"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "aba6d704.545928",
+        "type": "link out",
+        "z": "7f4ce2c1.80b31c",
+        "name": "switched main level",
+        "links": [
+            "d604f102.29fb1",
+            "5fd4d498.a02b2c"
+        ],
+        "x": 579.5,
+        "y": 162,
+        "wires": []
+    },
+    {
+        "id": "70f37b21.8f0c84",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Real Main level",
+        "links": [
+            "9378ea14.6c8718"
+        ],
+        "x": 172.5,
+        "y": 86,
+        "wires": [
+            [
+                "de8dbd5e.21724"
+            ]
+        ]
+    },
+    {
+        "id": "8603bb8f.79fc48",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 3:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 333.5,
+        "y": 238,
+        "wires": [
+            [
+                "aba6d704.545928"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4c758c2e.b38a74",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Simulated Main level",
+        "links": [
+            "d4ce9b5b.2b3168"
+        ],
+        "x": 178.5,
+        "y": 238,
+        "wires": [
+            [
+                "8603bb8f.79fc48"
+            ]
+        ]
+    },
+    {
+        "id": "1ee4445a.e11bbc",
+        "type": "debug",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 591.5,
+        "y": 339,
+        "wires": []
+    },
+    {
+        "id": "d604f102.29fb1",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "links": [
+            "aba6d704.545928"
+        ],
+        "x": 483.5,
+        "y": 275,
+        "wires": [
+            [
+                "1ee4445a.e11bbc"
+            ]
+        ]
+    },
+    {
+        "id": "ad4eee79.52b11",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "Sine generator",
+        "func": "var angle = context.get('angle')||0;\n\nmsg.payload = (1 + Math.sin(angle))/2;\n\nangle += 10 * Math.PI / 180;\n\ncontext.set('angle',angle);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 341.5,
+        "y": 648,
+        "wires": [
+            [
+                "9f5fd750.60a028",
+                "1e3184d6.e1ce7b"
+            ]
+        ]
+    },
+    {
+        "id": "325c2921.cda3d6",
+        "type": "inject",
+        "z": "414238f1.bebdc8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "x": 144.5,
+        "y": 648,
+        "wires": [
+            [
+                "ad4eee79.52b11"
+            ]
+        ]
+    },
+    {
+        "id": "9f5fd750.60a028",
+        "type": "function",
+        "z": "414238f1.bebdc8",
+        "name": "sine to ADC",
+        "func": "msg.payload = Math.round(1024 * msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 332.5,
+        "y": 695,
+        "wires": [
+            [
+                "a5953aee.5a6ac8"
+            ]
+        ]
+    },
+    {
+        "id": "ecef1ba3.1310e8",
+        "type": "comment",
+        "z": "414238f1.bebdc8",
+        "name": "Sinewave",
+        "info": "",
+        "x": 91,
+        "y": 596,
+        "wires": []
+    },
+    {
+        "id": "1e3184d6.e1ce7b",
+        "type": "link out",
+        "z": "414238f1.bebdc8",
+        "name": "sine function",
+        "links": [
+            "43b7802e.bc488"
+        ],
+        "x": 551,
+        "y": 645,
+        "wires": []
+    },
+    {
+        "id": "a5953aee.5a6ac8",
+        "type": "link out",
+        "z": "414238f1.bebdc8",
+        "name": "Sinusoidal ADC",
+        "links": [],
+        "x": 553,
+        "y": 694,
+        "wires": []
+    },
+    {
+        "id": "2bc11dd0.d43ee2",
+        "type": "ui_switch",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "label": "notifications",
+        "group": "3f2c84b1.c0d37c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "isOn",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 257.5,
+        "y": 226,
+        "wires": [
+            [
+                "5d2ac95c.a2d538"
+            ]
+        ]
+    },
+    {
+        "id": "5d2ac95c.a2d538",
+        "type": "function",
+        "z": "2f93ead9.d06c16",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    isOn = (msg.payload)? true:false;\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 415.5,
+        "y": 141,
+        "wires": [
+            [
+                "dfeaf7c9.201508"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ba9fcfbc.45603",
+        "type": "inject",
+        "z": "2f93ead9.d06c16",
+        "name": "init",
+        "topic": "isOn",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 102,
+        "y": 161,
+        "wires": [
+            [
+                "2bc11dd0.d43ee2",
+                "5d2ac95c.a2d538"
+            ]
+        ]
+    },
+    {
+        "id": "1467c9d.feb9836",
+        "type": "ui_dropdown",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "label": "Source",
+        "group": "57c74e51.8108f8",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "passthru": true,
+        "options": [
+            {
+                "label": "Measured",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "Manual",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "Simulation",
+                "value": 3,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "isOn",
+        "x": 316.5,
+        "y": 342,
+        "wires": [
+            [
+                "de8dbd5e.21724",
+                "d543dcc8.2abc2",
+                "8603bb8f.79fc48"
+            ]
+        ]
+    },
+    {
+        "id": "a8c2763c.573d88",
+        "type": "inject",
+        "z": "7f4ce2c1.80b31c",
+        "name": "init",
+        "topic": "",
+        "payload": "3",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 110,
+        "y": 367,
+        "wires": [
+            [
+                "1467c9d.feb9836",
+                "c5500b90.3aaff8"
+            ]
+        ]
+    },
+    {
+        "id": "883eadd4.77c15",
+        "type": "ui_slider",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "label": "Level",
+        "group": "57c74e51.8108f8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 101,
+        "y": 168,
+        "wires": [
+            [
+                "d543dcc8.2abc2"
+            ]
+        ]
+    },
+    {
+        "id": "d543dcc8.2abc2",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 2:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 316.5,
+        "y": 169,
+        "wires": [
+            [
+                "aba6d704.545928"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "b398a8ce.4c6758",
+        "type": "function",
+        "z": "948b214b.6b74e",
+        "name": "Alert Msg",
+        "func": "if (msg.payload === true) {\n    \n    // topic will go into the subject line of an email alert\n    msg.topic = \"Low water alert\";\n    // payload will go into the body\n    msg.payload = \"The Main tank is running low (\" + msg.data +'%)';\n\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 237,
+        "y": 425,
+        "wires": [
+            [
+                "61f02dcd.9e0fd4"
+            ]
+        ]
+    },
+    {
+        "id": "82e026ed.7d1fd8",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 1:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 327.5,
+        "y": 505,
+        "wires": [
+            [
+                "3b1751b2.c4e8ae"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "3b1751b2.c4e8ae",
+        "type": "link out",
+        "z": "7f4ce2c1.80b31c",
+        "name": "switched rain level",
+        "links": [
+            "621ac9f6.9de538",
+            "e680cf96.197f3"
+        ],
+        "x": 574.5,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "a0f35b9b.5f0ca8",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Rain % fill",
+        "links": [
+            "fb99740c.046688"
+        ],
+        "x": 167.5,
+        "y": 504,
+        "wires": [
+            [
+                "82e026ed.7d1fd8"
+            ]
+        ]
+    },
+    {
+        "id": "4bd01d12.b42fe4",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 3:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 328.5,
+        "y": 656,
+        "wires": [
+            [
+                "3b1751b2.c4e8ae"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5916e501.a6e91c",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Simulated Main level",
+        "links": [
+            "4a951601.b56ae8"
+        ],
+        "x": 173.5,
+        "y": 656,
+        "wires": [
+            [
+                "4bd01d12.b42fe4"
+            ]
+        ]
+    },
+    {
+        "id": "7a1cd748.85e328",
+        "type": "debug",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 586.5,
+        "y": 757,
+        "wires": []
+    },
+    {
+        "id": "e680cf96.197f3",
+        "type": "link in",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "links": [
+            "3b1751b2.c4e8ae"
+        ],
+        "x": 478.5,
+        "y": 693,
+        "wires": [
+            [
+                "7a1cd748.85e328"
+            ]
+        ]
+    },
+    {
+        "id": "c5500b90.3aaff8",
+        "type": "ui_dropdown",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "label": "Source",
+        "group": "95c34752.a45b58",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "passthru": true,
+        "options": [
+            {
+                "label": "Measured",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "Manual",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "Simulation",
+                "value": 3,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "isOn",
+        "x": 315.5,
+        "y": 399,
+        "wires": [
+            [
+                "82e026ed.7d1fd8",
+                "e6608b4c.199f78",
+                "4bd01d12.b42fe4"
+            ]
+        ]
+    },
+    {
+        "id": "7793ed29.886c14",
+        "type": "ui_slider",
+        "z": "7f4ce2c1.80b31c",
+        "name": "",
+        "label": "Level",
+        "group": "95c34752.a45b58",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "topic": "",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 96,
+        "y": 586,
+        "wires": [
+            [
+                "e6608b4c.199f78"
+            ]
+        ]
+    },
+    {
+        "id": "e6608b4c.199f78",
+        "type": "function",
+        "z": "7f4ce2c1.80b31c",
+        "name": "Valve",
+        "func": "// Simulates a tap.\n// send it isOn messages to set it state\n// send it a 'flow' and the flow appears on the \n// output of the tap along with it's compliment \n// which represents the taps inflow\nrc = null;\nvar isOn = context.get('isOn')||false;\n\nif (msg.topic == \"isOn\") {\n    switch (msg.payload) {\n        case true:\n        case 2:\n            isOn = true;\n            break;\n        default:\n            isOn = false;\n    }\n    context.set('isOn',isOn);\n}\n    \nelse if (isOn){\n    var nmsg = {    topic: msg.topic,\n                    payload: -msg.payload };\n    rc = [msg,nmsg];\n}\n\nnode.status(\n    (isOn)? {fill:\"green\",shape:\"dot\",text:\"on\"}\n\t\t    :{fill:\"grey\",shape:\"dot\",text:\"off\"}\n);\n\nreturn rc;",
+        "outputs": "2",
+        "noerr": 0,
+        "x": 311.5,
+        "y": 587,
+        "wires": [
+            [
+                "3b1751b2.c4e8ae"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "22ba91a.b78626e",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 567,
+        "y": 382,
+        "wires": []
+    },
+    {
+        "id": "69a72df6.1476a4",
+        "type": "xbee-tx",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "xBee": "825a1462.864af",
+        "x": 634,
+        "y": 834,
+        "wires": []
+    },
+    {
+        "id": "43a85f53.58dfb",
+        "type": "function",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 509,
+        "y": 771,
+        "wires": [
+            [
+                "69a72df6.1476a4"
+            ]
+        ]
+    },
+    {
+        "id": "4025a5fb.f91214",
+        "type": "xbee-rx",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "xBee": "825a1462.864af",
+        "x": 93,
+        "y": 358,
+        "wires": [
+            [
+                "5647011e.a9b9",
+                "546b9b69.ab9464"
+            ]
+        ]
+    },
+    {
+        "id": "ba665aa4.f31438",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 319,
+        "y": 519,
+        "wires": []
+    },
+    {
+        "id": "8244bf7f.9c7798",
+        "type": "inject",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 129,
+        "y": 767,
+        "wires": [
+            [
+                "e5b4bbe2.1a4b48"
+            ]
+        ]
+    },
+    {
+        "id": "546b9b69.ab9464",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 308.5,
+        "y": 579,
+        "wires": []
+    }
+]
