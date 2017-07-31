@@ -165,7 +165,7 @@
         "type": "ui_tab",
         "z": "",
         "name": "Settings",
-        "icon": "dashboard",
+        "icon": "settings",
         "order": 3
     },
     {
@@ -1950,7 +1950,7 @@
         "id": "983fb20e.67c05",
         "type": "exec",
         "z": "2f93ead9.d06c16",
-        "command": "ifconfig|grep inet|grep -v inet6|grep broadcast|awk -F' +' '{print $2}'",
+        "command": "./myip.sh",
         "addpay": false,
         "append": "",
         "useSpawn": "",
@@ -1960,7 +1960,8 @@
         "y": 979.5,
         "wires": [
             [
-                "a2d6d2e2.5d293"
+                "a2d6d2e2.5d293",
+                "4e320872.b1cdf8"
             ],
             [],
             []
@@ -2060,7 +2061,7 @@
         "order": 3,
         "width": "1",
         "height": "1",
-        "format": "<script src=\"/myjs/skycons.js\"></script>\n<script>\n    var skyconDefaults = {\"monochrome\": false \n        // \"colors\": { \n        //       \"main\": \"#779966\", \n        //       \"moon\":\"#666666\",\n        //       \"fog\": \"#555522\",\n        //       \"fogbank\": \"#884488\",\n        //       \"cloud\": \"#999999\",\n        //       \"snow\": \"#aaaaaa\",\n        //       \"leaf\":\"#00ff00\",\n        //       \"rain\": \"#00ffff\",\n        //       \"sun\": \"#ff3300\"\n        //    }\n        };\n</script>\n\n\n<canvas id=\"icon0\" width=\"48\" height=\"48\"></canvas>\n\n<script>\nvar skycons0 = new Skycons(skyconDefaults); \nskycons0.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons0.set(\"icon0\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons0.set(\"icon0\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons0.set(\"icon0\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons0.set(\"icon0\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons0.set(\"icon0\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons0.set(\"icon0\", Skycons.RAIN);\n           if (data==\"sleet\") skycons0.set(\"icon0\", Skycons.SLEET);\n           if (data==\"snow\") skycons0.set(\"icon0\", Skycons.SNOW);\n           if (data==\"wind\") skycons0.set(\"icon0\", Skycons.WIND);\n           if (data==\"fog\") skycons0.set(\"icon0\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<script src=\"/myjs/skycons.js\"></script>\n\n<canvas id=\"icon0\" width=\"48\" height=\"48\"></canvas>\n\n<script>\n    function setIcon(scope,icon) {\n        scope.$watch('msg.payload', function(data) {\n\n           if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n           if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n           if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n           if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n           if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n           if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n        });\n    };\n    var options = {\"monochrome\": false \n        // ,\"colors\": { \n        //       \"main\": \"#779966\", \n        //       \"moon\":\"#666666\",\n        //       \"fog\": \"#555522\",\n        //       \"fogbank\": \"#884488\",\n        //       \"cloud\": \"#999999\",\n        //       \"snow\": \"#aaaaaa\",\n        //       \"leaf\":\"#00ff00\",\n        //       \"rain\": \"#00ffff\",\n        //       \"sun\": \"#ff3300\"\n        //    }\n        };\n        \n    var skycons = new Skycons(options); \n    skycons.play();\n \n    var id = \"icon0\";\n    \n    setIcon(scope,id);\n    \n    // (function(scope) {\n    //     scope.$watch('msg.payload', function(data) {\n    //         if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n    //         if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n    //         if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n    //         if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n    //         if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n    //         if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n    //         if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n    //         if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n    //         if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n    //         if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n    //     });\n    // })(scope);\n\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2078,7 +2079,7 @@
         "order": 4,
         "width": "1",
         "height": "1",
-        "format": "<canvas id=\"icon1\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\nvar skycons1 = new Skycons(skyconDefaults); \nskycons1.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons1.set(\"icon1\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons1.set(\"icon1\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons1.set(\"icon1\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons1.set(\"icon1\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons1.set(\"icon1\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons1.set(\"icon1\", Skycons.RAIN);\n           if (data==\"sleet\") skycons1.set(\"icon1\", Skycons.SLEET);\n           if (data==\"snow\") skycons1.set(\"icon1\", Skycons.SNOW);\n           if (data==\"wind\") skycons1.set(\"icon1\", Skycons.WIND);\n           if (data==\"fog\") skycons1.set(\"icon1\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<canvas id=\"icon1\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon1\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2096,7 +2097,7 @@
         "order": 5,
         "width": "1",
         "height": "1",
-        "format": "<canvas id=\"icon2\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\nvar skycons2 = new Skycons(skyconDefaults);\nskycons2.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons2.set(\"icon2\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons2.set(\"icon2\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons2.set(\"icon2\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons2.set(\"icon2\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons2.set(\"icon2\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons2.set(\"icon2\", Skycons.RAIN);\n           if (data==\"sleet\") skycons2.set(\"icon2\", Skycons.SLEET);\n           if (data==\"snow\") skycons2.set(\"icon2\", Skycons.SNOW);\n           if (data==\"wind\") skycons2.set(\"icon2\", Skycons.WIND);\n           if (data==\"fog\") skycons2.set(\"icon2\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<canvas id=\"icon2\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon2\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2114,7 +2115,7 @@
         "order": 6,
         "width": "1",
         "height": "1",
-        "format": "<canvas id=\"icon3\" width=\"48\" height=\"48\"></canvas>\n \n<script>\nvar skycons3 = new Skycons(skyconDefaults);\nskycons3.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons3.set(\"icon3\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons3.set(\"icon3\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons3.set(\"icon3\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons3.set(\"icon3\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons3.set(\"icon3\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons3.set(\"icon3\", Skycons.RAIN);\n           if (data==\"sleet\") skycons3.set(\"icon3\", Skycons.SLEET);\n           if (data==\"snow\") skycons3.set(\"icon3\", Skycons.SNOW);\n           if (data==\"wind\") skycons3.set(\"icon3\", Skycons.WIND);\n           if (data==\"fog\") skycons3.set(\"icon3\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<canvas id=\"icon3\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon3\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2132,7 +2133,7 @@
         "order": 7,
         "width": "1",
         "height": "1",
-        "format": "<canvas id=\"icon4\" width=\"48\" height=\"48\"></canvas>\n \n<script>\nvar skycons4 = new Skycons(skyconDefaults);\nskycons4.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons4.set(\"icon4\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons4.set(\"icon4\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons4.set(\"icon4\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons4.set(\"icon4\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons4.set(\"icon4\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons4.set(\"icon4\", Skycons.RAIN);\n           if (data==\"sleet\") skycons4.set(\"icon4\", Skycons.SLEET);\n           if (data==\"snow\") skycons4.set(\"icon4\", Skycons.SNOW);\n           if (data==\"wind\") skycons4.set(\"icon4\", Skycons.WIND);\n           if (data==\"fog\") skycons4.set(\"icon4\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<canvas id=\"icon4\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon4\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2150,7 +2151,7 @@
         "order": 8,
         "width": "1",
         "height": "1",
-        "format": "<canvas id=\"icon5\" width=\"48\" height=\"48\"></canvas>\n \n<script>\nvar skycons5 = new Skycons(skyconDefaults);\nskycons5.play();\n \n    (function(scope) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons5.set(\"icon5\", Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons5.set(\"icon5\", Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons5.set(\"icon5\", Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons5.set(\"icon5\", Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons5.set(\"icon5\", Skycons.CLOUDY);\n           if (data==\"rain\") skycons5.set(\"icon5\", Skycons.RAIN);\n           if (data==\"sleet\") skycons5.set(\"icon5\", Skycons.SLEET);\n           if (data==\"snow\") skycons5.set(\"icon5\", Skycons.SNOW);\n           if (data==\"wind\") skycons5.set(\"icon5\", Skycons.WIND);\n           if (data==\"fog\") skycons5.set(\"icon5\", Skycons.FOG);\n        });\n    })(scope);\n \n</script>",
+        "format": "<canvas id=\"icon5\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon5\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
         "x": 751,
@@ -2394,7 +2395,7 @@
         "type": "debug",
         "z": "414238f1.bebdc8",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
         "x": 309.5,
@@ -2406,11 +2407,23 @@
         "type": "debug",
         "z": "414238f1.bebdc8",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
         "x": 352.5,
         "y": 535,
+        "wires": []
+    },
+    {
+        "id": "4e320872.b1cdf8",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 484.5,
+        "y": 1110,
         "wires": []
     }
 ]
