@@ -1,0 +1,56 @@
+[
+    {
+        "id": "983fb20e.67c05",
+        "type": "exec",
+        "z": "2f93ead9.d06c16",
+        "command": "ifconfig|grep inet|grep -v inet6|grep broadcast|awk -F' +' '{print $2}'",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "",
+        "timer": "",
+        "name": "ip?",
+        "x": 285.5,
+        "y": 979.5,
+        "wires": [
+            [
+                "a2d6d2e2.5d293"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a2d6d2e2.5d293",
+        "type": "ui_text",
+        "z": "2f93ead9.d06c16",
+        "group": "3f2c84b1.c0d37c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "My IP:",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "x": 443.5,
+        "y": 972,
+        "wires": []
+    },
+    {
+        "id": "3f2c84b1.c0d37c",
+        "type": "ui_group",
+        "z": "",
+        "name": "Test",
+        "tab": "65cd83bd.9a327c",
+        "order": 3,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "65cd83bd.9a327c",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Settings",
+        "icon": "dashboard",
+        "order": 2
+    }
+]
