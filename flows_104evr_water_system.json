@@ -1950,11 +1950,12 @@
         "id": "983fb20e.67c05",
         "type": "exec",
         "z": "2f93ead9.d06c16",
-        "command": "./myip.sh",
+        "command": "~/.node-red/myIp.sh",
         "addpay": false,
         "append": "",
-        "useSpawn": "",
+        "useSpawn": "false",
         "timer": "",
+        "oldrc": false,
         "name": "ip?",
         "x": 285.5,
         "y": 979.5,
@@ -1982,7 +1983,8 @@
         "y": 970,
         "wires": [
             [
-                "983fb20e.67c05"
+                "983fb20e.67c05",
+                "69434942.96bcb8"
             ]
         ]
     },
@@ -2422,8 +2424,43 @@
         "active": true,
         "console": "false",
         "complete": "false",
-        "x": 484.5,
-        "y": 1110,
+        "x": 530,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "69434942.96bcb8",
+        "type": "exec",
+        "z": "2f93ead9.d06c16",
+        "command": "pwd",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 290.5,
+        "y": 1189.5,
+        "wires": [
+            [
+                "841313b6.7becf"
+            ],
+            [
+                "4e320872.b1cdf8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "841313b6.7becf",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 480.5,
+        "y": 1183,
         "wires": []
     }
 ]
