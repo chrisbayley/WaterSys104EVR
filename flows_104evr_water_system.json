@@ -12,7 +12,8 @@
     {
         "id": "2f93ead9.d06c16",
         "type": "tab",
-        "label": "I/O"
+        "label": "I/O",
+        "disabled": false
     },
     {
         "id": "414238f1.bebdc8",
@@ -73,7 +74,7 @@
                     "edited": false
                 },
                 "group-textColor": {
-                    "value": "#10cfd8",
+                    "value": "#0eb8c0",
                     "edited": false
                 },
                 "group-borderColor": {
@@ -147,20 +148,6 @@
         "width": "6"
     },
     {
-        "id": "c97abe4.f36854",
-        "type": "serial-port",
-        "z": "",
-        "serialport": "/dev/ttyUSB0",
-        "serialbaud": "115200",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "newline": "50",
-        "bin": "false",
-        "out": "time",
-        "addchar": false
-    },
-    {
         "id": "65cd83bd.9a327c",
         "type": "ui_tab",
         "z": "",
@@ -177,42 +164,6 @@
         "order": 3,
         "disp": true,
         "width": "6"
-    },
-    {
-        "id": "fc2a2add.7bd128",
-        "type": "serial-port",
-        "z": "",
-        "serialport": "/dev/ttyS0",
-        "serialbaud": "115200",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "newline": "\\n",
-        "bin": "false",
-        "out": "char",
-        "addchar": false
-    },
-    {
-        "id": "825a1462.864af",
-        "type": "xbee-config",
-        "z": "",
-        "apiMode": "1",
-        "rawFrames": false,
-        "convertAdc": true,
-        "vrefAdc": "1200",
-        "serialPort": "/dev/tty.usbserial-DA0122KY",
-        "lock": false,
-        "baudRate": "115200",
-        "dataBits": "8",
-        "stopBits": "1",
-        "parity": "none",
-        "bufferSize": "65536",
-        "rtscts": false,
-        "xon": false,
-        "xoff": false,
-        "xany": false,
-        "vmin": "1",
-        "vtime": "0"
     },
     {
         "id": "57c74e51.8108f8",
@@ -235,15 +186,6 @@
         "width": "6"
     },
     {
-        "id": "fc8932f.f0376d",
-        "type": "ui_group",
-        "z": "",
-        "name": "Default",
-        "tab": "",
-        "disp": true,
-        "width": "6"
-    },
-    {
         "id": "f2d280b9.0d2d8",
         "type": "ui_group",
         "z": "",
@@ -259,6 +201,28 @@
         "name": "Weather",
         "icon": "wb_sunny",
         "order": 2
+    },
+    {
+        "id": "7b401d11.84bfe4",
+        "type": "xbee-config",
+        "z": "",
+        "apiMode": "1",
+        "rawFrames": false,
+        "convertAdc": true,
+        "vrefAdc": "1200",
+        "serialPort": "/dev/ttyS0",
+        "lock": true,
+        "baudRate": "115200",
+        "dataBits": "8",
+        "stopBits": "1",
+        "parity": "none",
+        "bufferSize": "65536",
+        "rtscts": false,
+        "xon": false,
+        "xoff": false,
+        "xany": false,
+        "vmin": "1",
+        "vtime": "0"
     },
     {
         "id": "97bd4f7b.6842b",
@@ -545,8 +509,8 @@
         "func": "if (msg.payload == true) {\n    msg.payload = false;\n    return msg;\n}else{\n    return null;\n}",
         "outputs": 1,
         "noerr": 0,
-        "x": 362.5,
-        "y": 338,
+        "x": 380,
+        "y": 320,
         "wires": [
             [
                 "307f2ad4.cf80d6"
@@ -947,7 +911,7 @@
         "type": "function",
         "z": "2f93ead9.d06c16",
         "name": "Get Firmware Version",
-        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;g;",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 308.5,
@@ -1170,7 +1134,7 @@
         "type": "function",
         "z": "ce14a002.31eb6",
         "name": "cm to %full",
-        "func": "// cm tanks levels\nvar empty = 300;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n",
+        "func": "// cm tanks levels\nvar empty = context.get('emptyLevel')||300;\nvar full = context.get('fullLevel')||50;\nvar cur = msg.payload;\n\nempty = Math.max(cur,empty);\nfull = Math.min(cur,full);\n\ncontext.set('emptyLevel',empty);\ncontext.set('fullLevel',full);\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill';\n\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "x": 365.5,
@@ -1230,7 +1194,7 @@
         "type": "function",
         "z": "948b214b.6b74e",
         "name": "cm to %full",
-        "func": "// cm tanks levels\nvar empty = 500;\nvar full = 50;\nvar cur = msg.payload;\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill'\nreturn msg;\n",
+        "func": "// cm tanks levels\nvar empty = context.get('emptyLevel')||300;\nvar full = context.get('fullLevel')||50;\nvar cur = msg.payload;\n\nempty = Math.max(cur,empty);\nfull = Math.min(cur,full);\n\ncontext.set('emptyLevel',empty);\ncontext.set('fullLevel',full);\n\nmsg.payload = \n    Math.round(100 * ((empty - cur) / (empty - full)));\nmsg.topic = 'fill';\n\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "x": 353.5,
@@ -1855,7 +1819,7 @@
         "type": "debug",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "active": false,
+        "active": true,
         "console": "false",
         "complete": "false",
         "x": 567,
@@ -1867,7 +1831,7 @@
         "type": "xbee-tx",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "xBee": "",
+        "xBee": "7b401d11.84bfe4",
         "x": 634,
         "y": 834,
         "wires": []
@@ -1884,7 +1848,8 @@
         "y": 771,
         "wires": [
             [
-                "69a72df6.1476a4"
+                "69a72df6.1476a4",
+                "3fce0344.c031fc"
             ]
         ]
     },
@@ -1893,9 +1858,9 @@
         "type": "xbee-rx",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "xBee": "",
-        "x": 93,
-        "y": 358,
+        "xBee": "7b401d11.84bfe4",
+        "x": 120,
+        "y": 540,
         "wires": [
             [
                 "5647011e.a9b9",
@@ -1939,7 +1904,7 @@
         "type": "debug",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
         "x": 308.5,
@@ -2029,9 +1994,10 @@
         "order": 9,
         "width": 0,
         "height": 0,
-        "format": "<style>\n    .filled {\n        height: 100% !important;\n        padding: 0 !important;\n        margin: 0 !important;\n    }\n    .nr-dashboard-template {\n        padding: 0;\n        margin: 0;\n    }\n    .rounded {\n        border-radius: 12px 12px 12px 12px;\n    }\n    .bigfont {\n        font-size: 18px;\n    }\n    .smallfont {\n        font-size: 12px;\n    }\n</style>\n \n<script>\n    $('.vibrate').on('click', function() {\n        navigator.vibrate(100);\n    });\n\n    function restore_bg(x) {\n        $(this).css(\"background-color\", x);\n    };\n\n    $('.touched').on('mousedown', function() {\n        var x = $(this).css(\"background-color\");\n        $(this).css(\"background-color\", \"yellow\");\n\n        setTimeout(restore_bg.bind(this, x), 200);\n        navigator.vibrate(80);\n    });\n</script>\n\n\n\n \n",
+        "format": "<style>\n    .filled {\n        height: 100% !important;\n        padding: 0 !important;\n        margin: 0 !important;\n    }\n    .nr-dashboard-template {\n        padding: 0;\n        margin: 0;\n    }\n    .rounded {\n        border-radius: 12px 12px 12px 12px;\n    }\n    .bigfont {\n        font-size: 18px;\n    }\n    .smallfont {\n        font-size: 12px;\n    }\n    .hi {\n        color: \"red\";\n    }\n    .lo {\n        color: \"blue\";\n    }\n</style>\n \n<script>\n    $('.vibrate').on('click', function() {\n        navigator.vibrate(100);\n    });\n\n    function restore_bg(x) {\n        $(this).css(\"background-color\", x);\n    };\n\n    $('.touched').on('mousedown', function() {\n        var x = $(this).css(\"background-color\");\n        $(this).css(\"background-color\", \"yellow\");\n\n        setTimeout(restore_bg.bind(this, x), 200);\n        navigator.vibrate(80);\n    });\n\n </script>\n\n \n",
         "storeOutMessages": true,
         "fwdInMessages": true,
+        "templateScope": "local",
         "x": 751,
         "y": 277,
         "wires": [
@@ -2063,9 +2029,10 @@
         "order": 3,
         "width": "1",
         "height": "1",
-        "format": "<script src=\"/myjs/skycons.js\"></script>\n\n<canvas id=\"icon0\" width=\"48\" height=\"48\"></canvas>\n\n<script>\n    function setIcon(scope,icon) {\n        scope.$watch('msg.payload', function(data) {\n\n           if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n           if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n           if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n           if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n           if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n           if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n        });\n    };\n    var options = {\"monochrome\": false \n        // ,\"colors\": { \n        //       \"main\": \"#779966\", \n        //       \"moon\":\"#666666\",\n        //       \"fog\": \"#555522\",\n        //       \"fogbank\": \"#884488\",\n        //       \"cloud\": \"#999999\",\n        //       \"snow\": \"#aaaaaa\",\n        //       \"leaf\":\"#00ff00\",\n        //       \"rain\": \"#00ffff\",\n        //       \"sun\": \"#ff3300\"\n        //    }\n        };\n        \n    var skycons = new Skycons(options); \n    skycons.play();\n \n    var id = \"icon0\";\n    \n    setIcon(scope,id);\n    \n    // (function(scope) {\n    //     scope.$watch('msg.payload', function(data) {\n    //         if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n    //         if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n    //         if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n    //         if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n    //         if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n    //         if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n    //         if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n    //         if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n    //         if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n    //         if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n    //     });\n    // })(scope);\n\n</script>",
+        "format": "<script src=\"/myjs/skycons.js\"></script>\n\n<canvas id=\"icon0\" width=\"48\" height=\"48\"></canvas>\n\n<script>\n   var options = {\"monochrome\": false \n        // ,\"colors\": { \n        //       \"main\": \"#779966\", \n        //       \"moon\":\"#666666\",\n        //       \"fog\": \"#555522\",\n        //       \"fogbank\": \"#884488\",\n        //       \"cloud\": \"#999999\",\n        //       \"snow\": \"#aaaaaa\",\n        //       \"leaf\":\"#00ff00\",\n        //       \"rain\": \"#00ffff\",\n        //       \"sun\": \"#ff3300\"\n        //    }\n        };\n        \n    function setIcon(scope,icon) {\n        scope.$watch('msg.payload', function(data) {\n           if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n           if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n           if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n           if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n           if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n           if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n           if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n           if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n           if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n           if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n        });\n    };\n \n        \n    var skycons = new Skycons(options); \n    skycons.play();\n \n    var id = \"icon0\";\n    \n    setIcon(scope,id);\n    \n    // (function(scope) {\n    //     scope.$watch('msg.payload', function(data) {\n    //         if (data==\"clear-day\") skycons.set(icon, Skycons.CLEAR_DAY);\n    //         if (data==\"clear-night\") skycons.set(icon, Skycons.CLEAR_NIGHT);\n    //         if (data==\"partly-cloudy-day\") skycons.set(icon, Skycons.PARTLY_CLOUDY_DAY);\n    //         if (data==\"partly-cloudy-night\") skycons.set(icon, Skycons.PARTLY_CLOUDY_NIGHT);\n    //         if (data==\"cloudy\") skycons.set(icon, Skycons.CLOUDY);\n    //         if (data==\"rain\") skycons.set(icon, Skycons.RAIN);\n    //         if (data==\"sleet\") skycons.set(icon, Skycons.SLEET);\n    //         if (data==\"snow\") skycons.set(icon, Skycons.SNOW);\n    //         if (data==\"wind\") skycons.set(icon, Skycons.WIND);\n    //         if (data==\"fog\") skycons.set(icon, Skycons.FOG);\n    //     });\n    // })(scope);\n\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
+        "templateScope": "local",
         "x": 751,
         "y": 337,
         "wires": [
@@ -2254,6 +2221,7 @@
         "format": "<div layout=\"row\" layout-align=\"space-between\" style=\"text-align: left; margin:8px 0 0 8px;\">\n<span style=\"width:16%;margin-left:4px;\">{{msg.d0}}</span>\n<span style=\"width:16%;margin-left:4px;\">{{msg.d1}}</span>\n<span style=\"width:16%;margin-left:4px;\">{{msg.d2}}</span>\n<span style=\"width:16%;margin-left:4px;\">{{msg.d3}}</span>\n<span style=\"width:16%;margin-left:4px;\">{{msg.d4}}</span>\n<span style=\"width:16%;margin-left:4px;\">{{msg.d5}}</span>\n</div>",
         "storeOutMessages": true,
         "fwdInMessages": true,
+        "templateScope": "local",
         "x": 751,
         "y": 157,
         "wires": [
@@ -2285,9 +2253,10 @@
         "order": 2,
         "width": "6",
         "height": "1",
-        "format": "<div layout=\"row\" layout-align=\"space-between\" style=\"text-align: left; margin:-3px 0 0 4px;\">\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax1 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin1 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax2 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin2 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax3 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin3 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax4 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin4 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax5 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin5 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax6 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin6 + \"°\"}}</div>\n    </div>\n</div>",
+        "format": "<div layout=\"row\" layout-align=\"space-between\" style=\"text-align: left; margin:-3px 0 0 4px;\">\n    <div style=\"width:16%;margin-left:6px;\">\n        <div style=\"hi\"><span>&#8679;</span>{{msg.tmax1 + \"°\"}}</div>\n        <div style=\"lo\"><span>&#8681;</span>{{msg.tmin1 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax2 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin2 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax3 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin3 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax4 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin4 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax5 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin5 + \"°\"}}</div>\n    </div>\n    <div style=\"width:16%;margin-left:6px;\">\n        <div><span>&#8679;</span>{{msg.tmax6 + \"°\"}}</div>\n        <div><span>&#8681;</span>{{msg.tmin6 + \"°\"}}</div>\n    </div>\n</div>",
         "storeOutMessages": true,
         "fwdInMessages": true,
+        "templateScope": "local",
         "x": 741,
         "y": 217,
         "wires": [
@@ -2461,6 +2430,18 @@
         "complete": "false",
         "x": 480.5,
         "y": 1183,
+        "wires": []
+    },
+    {
+        "id": "3fce0344.c031fc",
+        "type": "debug",
+        "z": "2f93ead9.d06c16",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 620.5,
+        "y": 676,
         "wires": []
     }
 ]
