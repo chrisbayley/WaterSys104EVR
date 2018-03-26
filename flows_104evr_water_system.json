@@ -16,6 +16,20 @@
         "disabled": false
     },
     {
+        "id": "a28e7aaa.32de",
+        "type": "tab",
+        "label": "XBee In",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b883f942.771888",
+        "type": "tab",
+        "label": "Xbee OUT",
+        "disabled": false,
+        "info": ""
+    },
+    {
         "id": "414238f1.bebdc8",
         "type": "tab",
         "label": "Simulation"
@@ -29,6 +43,18 @@
         "id": "d512f3f4.2aed1",
         "type": "tab",
         "label": "Weather"
+    },
+    {
+        "id": "424211aa.fab598",
+        "type": "tab",
+        "label": "Sigma",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "c96fed1a.5013d",
+        "type": "tab",
+        "label": "Flow 2"
     },
     {
         "id": "c2e924f0.3d16d8",
@@ -211,8 +237,8 @@
         "convertAdc": true,
         "vrefAdc": "1200",
         "serialPort": "/dev/ttyS0",
-        "lock": true,
-        "baudRate": "115200",
+        "lock": false,
+        "baudRate": "9600",
         "dataBits": "8",
         "stopBits": "1",
         "parity": "none",
@@ -223,6 +249,42 @@
         "xany": false,
         "vmin": "1",
         "vtime": "0"
+    },
+    {
+        "id": "db8d1288.ec5c",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Sigma",
+        "icon": "dashboard",
+        "order": 4
+    },
+    {
+        "id": "41d919af.074e08",
+        "type": "ui_group",
+        "z": "",
+        "name": "nodes",
+        "tab": "db8d1288.ec5c",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "e4400843.2147f8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Log Live2",
+        "tab": "96b5ebb4.df3228",
+        "order": 2,
+        "disp": true,
+        "width": "12"
+    },
+    {
+        "id": "96b5ebb4.df3228",
+        "type": "ui_tab",
+        "z": "c96fed1a.5013d",
+        "name": "Pi NR Log",
+        "icon": "dashboard",
+        "order": 4
     },
     {
         "id": "97bd4f7b.6842b",
@@ -609,8 +671,8 @@
         "links": [
             "3b1751b2.c4e8ae"
         ],
-        "x": 169.5,
-        "y": 108,
+        "x": 163.5,
+        "y": 69,
         "wires": [
             [
                 "a1f727.ff5e08d8",
@@ -623,12 +685,12 @@
         "id": "da81186f.257ee8",
         "type": "function",
         "z": "948b214b.6b74e",
-        "name": "Schmitt trigger",
+        "name": "Hysterisis",
         "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 80;\nconst offThreshold = 70;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = msg.payload = true;\n}\nelse if ((level < offThreshold) && myState) {\n    myState = msg.payload = false;\n}\nelse {\n    msg = null;\n}\n\ncontext.set('myState',myState);\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 422.5,
-        "y": 162,
+        "x": 349.5,
+        "y": 163,
         "wires": [
             [
                 "9d42ede7.62bd1"
@@ -657,8 +719,8 @@
         "offvalueType": "bool",
         "officon": "",
         "offcolor": "",
-        "x": 427.5,
-        "y": 225,
+        "x": 522.5,
+        "y": 222,
         "wires": [
             [
                 "de69ace1.21965"
@@ -700,12 +762,12 @@
         "id": "d0a2afd9.2f5d5",
         "type": "function",
         "z": "948b214b.6b74e",
-        "name": "Schmitt trigger",
+        "name": "Hysterisis",
         "func": "// Schmitt trigger turns on at hight% and turns off at low%\n\nconst onThreshold = 25;\nconst offThreshold = 20;\n\nvar myState = context.get('myState')||false;\n\nvar level = msg.payload;\n\nmsg.topic = \"isOn\";\n\nif ((level > onThreshold) && !myState) {\n    myState = true;\n} else if ((level < offThreshold) && myState) {\n    myState = false;\n} else {\n    return null;\n}\n\ncontext.set('myState',myState);\n\n// invert the output cos it's a LOW level alert\nmsg.payload = !myState;\nmsg.data = level;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 187,
-        "y": 245,
+        "x": 146,
+        "y": 221,
         "wires": [
             [
                 "ffd9e8f.f002618"
@@ -753,8 +815,8 @@
         "links": [
             "6da70451.9258fc"
         ],
-        "x": 544.5,
-        "y": 227,
+        "x": 625.5,
+        "y": 225,
         "wires": []
     },
     {
@@ -839,8 +901,8 @@
         "links": [
             "eaabe517.155418"
         ],
-        "x": 366.5,
-        "y": 425,
+        "x": 587.5,
+        "y": 373,
         "wires": []
     },
     {
@@ -872,236 +934,6 @@
         "wires": []
     },
     {
-        "id": "fa850761.057af8",
-        "type": "inject",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 149.5,
-        "y": 711,
-        "wires": [
-            [
-                "46e0e625.b91f18"
-            ]
-        ]
-    },
-    {
-        "id": "46e0e625.b91f18",
-        "type": "function",
-        "z": "2f93ead9.d06c16",
-        "name": "Get AD0",
-        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"D0\",\n  \tdestination64: \"0013A20040C456D3\",\n\tremoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 309.5,
-        "y": 710,
-        "wires": [
-            [
-                "43a85f53.58dfb"
-            ]
-        ]
-    },
-    {
-        "id": "e5b4bbe2.1a4b48",
-        "type": "function",
-        "z": "2f93ead9.d06c16",
-        "name": "Get Firmware Version",
-        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 308.5,
-        "y": 766,
-        "wires": [
-            [
-                "43a85f53.58dfb"
-            ]
-        ]
-    },
-    {
-        "id": "fcd92680.0326d8",
-        "type": "inject",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 149.5,
-        "y": 825,
-        "wires": [
-            [
-                "bea83a04.4157c8"
-            ]
-        ]
-    },
-    {
-        "id": "bea83a04.4157c8",
-        "type": "function",
-        "z": "2f93ead9.d06c16",
-        "name": "Get NodeID",
-        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"NI\",\n  \tdestination64: \"FFFE\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 318.5,
-        "y": 825,
-        "wires": [
-            [
-                "43a85f53.58dfb"
-            ]
-        ]
-    },
-    {
-        "id": "5647011e.a9b9",
-        "type": "switch",
-        "z": "2f93ead9.d06c16",
-        "name": "msg.type",
-        "property": "payload.type",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "0x92",
-                "vt": "num"
-            },
-            {
-                "t": "eq",
-                "v": "0x88",
-                "vt": "num"
-            }
-        ],
-        "checkall": "false",
-        "outputs": 2,
-        "x": 164.5,
-        "y": 424,
-        "wires": [
-            [
-                "ff920d24.006df"
-            ],
-            [
-                "ba665aa4.f31438"
-            ]
-        ]
-    },
-    {
-        "id": "ff920d24.006df",
-        "type": "switch",
-        "z": "2f93ead9.d06c16",
-        "name": "ADIO.remote64",
-        "property": "payload.remote64",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "0013a20040a9ddf8",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "0013a20040b7b1fd",
-                "vt": "str"
-            }
-        ],
-        "checkall": "false",
-        "outputs": 2,
-        "x": 335.5,
-        "y": 381,
-        "wires": [
-            [
-                "72f6d63c.8d0928"
-            ],
-            [
-                "c626c597.39d938"
-            ]
-        ]
-    },
-    {
-        "id": "72f6d63c.8d0928",
-        "type": "change",
-        "z": "2f93ead9.d06c16",
-        "name": "Main.AD1",
-        "rules": [
-            {
-                "t": "move",
-                "p": "payload.analogSamples.AD1",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 375.5,
-        "y": 338,
-        "wires": [
-            [
-                "f26a1de2.0d95e",
-                "22ba91a.b78626e"
-            ]
-        ]
-    },
-    {
-        "id": "c626c597.39d938",
-        "type": "change",
-        "z": "2f93ead9.d06c16",
-        "name": "Rain.AD1",
-        "rules": [
-            {
-                "t": "move",
-                "p": "payload.analogSamples.AD1",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 374,
-        "y": 426,
-        "wires": [
-            [
-                "2cb39bc9.d34c64",
-                "22ba91a.b78626e"
-            ]
-        ]
-    },
-    {
-        "id": "f26a1de2.0d95e",
-        "type": "link out",
-        "z": "2f93ead9.d06c16",
-        "name": "Main ADC out",
-        "links": [
-            "7e8ab1f8.81755"
-        ],
-        "x": 495.5,
-        "y": 338,
-        "wires": []
-    },
-    {
-        "id": "2cb39bc9.d34c64",
-        "type": "link out",
-        "z": "2f93ead9.d06c16",
-        "name": "Rain ADC out",
-        "links": [
-            "ea27ba5a.15d848"
-        ],
-        "x": 495.5,
-        "y": 425,
-        "wires": []
-    },
-    {
         "id": "9378ea14.6c8718",
         "type": "link out",
         "z": "ce14a002.31eb6",
@@ -1125,7 +957,8 @@
         "y": 549,
         "wires": [
             [
-                "6e6eb374.91914c"
+                "6e6eb374.91914c",
+                "6c7faa15.89dd8c"
             ]
         ]
     },
@@ -1151,7 +984,8 @@
         "z": "ce14a002.31eb6",
         "name": "Main ADC in",
         "links": [
-            "f26a1de2.0d95e"
+            "f26a1de2.0d95e",
+            "c9736846.2fc8e8"
         ],
         "x": 141,
         "y": 548,
@@ -1185,7 +1019,8 @@
         "y": 548,
         "wires": [
             [
-                "63a987fc.9c5678"
+                "63a987fc.9c5678",
+                "6499eea6.4189f8"
             ]
         ]
     },
@@ -1211,7 +1046,8 @@
         "z": "948b214b.6b74e",
         "name": "Rain ADC in",
         "links": [
-            "2cb39bc9.d34c64"
+            "2cb39bc9.d34c64",
+            "cecf344d.f3d68"
         ],
         "x": 181,
         "y": 545,
@@ -1220,26 +1056,6 @@
                 "b9476527.46b898"
             ]
         ]
-    },
-    {
-        "id": "a34709a1.5cb8f8",
-        "type": "comment",
-        "z": "2f93ead9.d06c16",
-        "name": "incoming",
-        "info": "",
-        "x": 76.5,
-        "y": 298,
-        "wires": []
-    },
-    {
-        "id": "c13a6a86.3ec598",
-        "type": "comment",
-        "z": "2f93ead9.d06c16",
-        "name": "outgoing",
-        "info": "",
-        "x": 77.5,
-        "y": 660,
-        "wires": []
     },
     {
         "id": "da91907d.256e7",
@@ -1466,8 +1282,8 @@
         "offvalueType": "bool",
         "officon": "",
         "offcolor": "",
-        "x": 257.5,
-        "y": 226,
+        "x": 283.5,
+        "y": 225,
         "wires": [
             [
                 "5d2ac95c.a2d538"
@@ -1557,7 +1373,7 @@
         "z": "7f4ce2c1.80b31c",
         "name": "init",
         "topic": "",
-        "payload": "3",
+        "payload": "1",
         "payloadType": "num",
         "repeat": "",
         "crontab": "",
@@ -1619,8 +1435,8 @@
         "func": "if (msg.payload === true) {\n    \n    // topic will go into the subject line of an email alert\n    msg.topic = \"Low water alert\";\n    // payload will go into the body\n    msg.payload = \"The Main tank is running low (\" + msg.data +'%)';\n\n    return msg;\n}\n\nreturn null;",
         "outputs": 1,
         "noerr": 0,
-        "x": 237,
-        "y": 425,
+        "x": 426,
+        "y": 366,
         "wires": [
             [
                 "61f02dcd.9e0fd4"
@@ -1815,103 +1631,6 @@
         ]
     },
     {
-        "id": "22ba91a.b78626e",
-        "type": "debug",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "active": true,
-        "console": "false",
-        "complete": "false",
-        "x": 567,
-        "y": 382,
-        "wires": []
-    },
-    {
-        "id": "69a72df6.1476a4",
-        "type": "xbee-tx",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "xBee": "7b401d11.84bfe4",
-        "x": 634,
-        "y": 834,
-        "wires": []
-    },
-    {
-        "id": "43a85f53.58dfb",
-        "type": "function",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "func": "\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 509,
-        "y": 771,
-        "wires": [
-            [
-                "69a72df6.1476a4",
-                "3fce0344.c031fc"
-            ]
-        ]
-    },
-    {
-        "id": "4025a5fb.f91214",
-        "type": "xbee-rx",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "xBee": "7b401d11.84bfe4",
-        "x": 120,
-        "y": 540,
-        "wires": [
-            [
-                "5647011e.a9b9",
-                "546b9b69.ab9464"
-            ]
-        ]
-    },
-    {
-        "id": "ba665aa4.f31438",
-        "type": "debug",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "active": true,
-        "console": "false",
-        "complete": "false",
-        "x": 319,
-        "y": 519,
-        "wires": []
-    },
-    {
-        "id": "8244bf7f.9c7798",
-        "type": "inject",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 129,
-        "y": 767,
-        "wires": [
-            [
-                "e5b4bbe2.1a4b48"
-            ]
-        ]
-    },
-    {
-        "id": "546b9b69.ab9464",
-        "type": "debug",
-        "z": "2f93ead9.d06c16",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "false",
-        "x": 308.5,
-        "y": 579,
-        "wires": []
-    },
-    {
         "id": "983fb20e.67c05",
         "type": "exec",
         "z": "2f93ead9.d06c16",
@@ -1922,8 +1641,8 @@
         "timer": "",
         "oldrc": false,
         "name": "ip?",
-        "x": 285.5,
-        "y": 979.5,
+        "x": 290,
+        "y": 380,
         "wires": [
             [
                 "a2d6d2e2.5d293",
@@ -1944,8 +1663,8 @@
         "repeat": "",
         "crontab": "",
         "once": true,
-        "x": 113.5,
-        "y": 970,
+        "x": 118,
+        "y": 370.5,
         "wires": [
             [
                 "983fb20e.67c05",
@@ -1965,8 +1684,8 @@
         "label": "My IP:",
         "format": "{{msg.payload}}",
         "layout": "row-spread",
-        "x": 443.5,
-        "y": 972,
+        "x": 448,
+        "y": 372.5,
         "wires": []
     },
     {
@@ -2051,6 +1770,7 @@
         "format": "<canvas id=\"icon1\"  width=\"48\" height=\"48\"></canvas>\n \n<script>\n    setIcon(scope,\"icon1\");\n</script>",
         "storeOutMessages": true,
         "fwdInMessages": true,
+        "templateScope": "local",
         "x": 751,
         "y": 377,
         "wires": [
@@ -2345,8 +2065,8 @@
         "z": "2f93ead9.d06c16",
         "name": "Show my IP",
         "info": "",
-        "x": 87.5,
-        "y": 927,
+        "x": 92,
+        "y": 327.5,
         "wires": []
     },
     {
@@ -2390,11 +2110,11 @@
         "type": "debug",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
-        "x": 530,
-        "y": 1080,
+        "x": 534.5,
+        "y": 480.5,
         "wires": []
     },
     {
@@ -2408,8 +2128,8 @@
         "timer": "",
         "oldrc": false,
         "name": "",
-        "x": 290.5,
-        "y": 1189.5,
+        "x": 290,
+        "y": 460,
         "wires": [
             [
                 "841313b6.7becf"
@@ -2425,23 +2145,1245 @@
         "type": "debug",
         "z": "2f93ead9.d06c16",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
-        "x": 480.5,
-        "y": 1183,
+        "x": 485,
+        "y": 583.5,
         "wires": []
     },
     {
-        "id": "3fce0344.c031fc",
+        "id": "112718f4.b8d4c7",
+        "type": "switch",
+        "z": "a28e7aaa.32de",
+        "name": "msg.type",
+        "property": "payload.type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0x92",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "0x88",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "0x97",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 4,
+        "x": 194,
+        "y": 325,
+        "wires": [
+            [
+                "cfdecfc3.03ceb8"
+            ],
+            [
+                "4bf28b62.e3564c"
+            ],
+            [
+                "cac60ac5.bbe058",
+                "5c53d08c.6f809"
+            ],
+            [
+                "6aa6d329.1a87d4"
+            ]
+        ],
+        "outputLabels": [
+            "Remote ADIO",
+            "AT Response",
+            "RAT Response",
+            ""
+        ]
+    },
+    {
+        "id": "cfdecfc3.03ceb8",
+        "type": "switch",
+        "z": "a28e7aaa.32de",
+        "name": "remote16",
+        "property": "payload.remote16",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "$globalContext(\"Main\")",
+                "vt": "jsonata"
+            },
+            {
+                "t": "eq",
+                "v": "$globalContext(\"Rain\")",
+                "vt": "jsonata"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 3,
+        "x": 325,
+        "y": 242,
+        "wires": [
+            [
+                "243d3c13.02aef4"
+            ],
+            [
+                "11ddf31d.6ed755"
+            ],
+            []
+        ],
+        "outputLabels": [
+            "Main",
+            "Rain",
+            null
+        ]
+    },
+    {
+        "id": "243d3c13.02aef4",
+        "type": "change",
+        "z": "a28e7aaa.32de",
+        "name": "Main.AD0",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.analogSamples.AD0",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 385,
+        "y": 199,
+        "wires": [
+            [
+                "c9736846.2fc8e8",
+                "103e3a1b.d44a86"
+            ]
+        ]
+    },
+    {
+        "id": "11ddf31d.6ed755",
+        "type": "change",
+        "z": "a28e7aaa.32de",
+        "name": "Rain.AD0",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.analogSamples.AD0",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 383.5,
+        "y": 287,
+        "wires": [
+            [
+                "cecf344d.f3d68",
+                "103e3a1b.d44a86"
+            ]
+        ]
+    },
+    {
+        "id": "c9736846.2fc8e8",
+        "type": "link out",
+        "z": "a28e7aaa.32de",
+        "name": "Main ADC out",
+        "links": [
+            "7e8ab1f8.81755"
+        ],
+        "x": 505,
+        "y": 199,
+        "wires": []
+    },
+    {
+        "id": "cecf344d.f3d68",
+        "type": "link out",
+        "z": "a28e7aaa.32de",
+        "name": "Rain ADC out",
+        "links": [
+            "ea27ba5a.15d848"
+        ],
+        "x": 505,
+        "y": 286,
+        "wires": []
+    },
+    {
+        "id": "14d9b98.6fc44c7",
+        "type": "comment",
+        "z": "a28e7aaa.32de",
+        "name": "incoming",
+        "info": "",
+        "x": 92,
+        "y": 54,
+        "wires": []
+    },
+    {
+        "id": "103e3a1b.d44a86",
         "type": "debug",
-        "z": "2f93ead9.d06c16",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 576.5,
+        "y": 243,
+        "wires": []
+    },
+    {
+        "id": "490fecd7.84027c",
+        "type": "xbee-rx",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "xBee": "7b401d11.84bfe4",
+        "x": 94,
+        "y": 205,
+        "wires": [
+            [
+                "112718f4.b8d4c7"
+            ]
+        ]
+    },
+    {
+        "id": "4bf28b62.e3564c",
+        "type": "debug",
+        "z": "a28e7aaa.32de",
         "name": "",
         "active": true,
         "console": "false",
         "complete": "false",
-        "x": 620.5,
-        "y": 676,
+        "x": 404,
+        "y": 345,
         "wires": []
+    },
+    {
+        "id": "271d84a4.d883a4",
+        "type": "rpi-gpio out",
+        "z": "a28e7aaa.32de",
+        "name": "User LED",
+        "pin": "38",
+        "set": "",
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 356,
+        "y": 114,
+        "wires": []
+    },
+    {
+        "id": "5be24ac9.d05414",
+        "type": "trigger",
+        "z": "a28e7aaa.32de",
+        "op1": "0",
+        "op2": "1",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "100",
+        "extend": false,
+        "units": "ms",
+        "reset": "",
+        "name": "",
+        "x": 116,
+        "y": 114,
+        "wires": [
+            [
+                "271d84a4.d883a4"
+            ]
+        ]
+    },
+    {
+        "id": "36f46095.5c11e8",
+        "type": "ui_template",
+        "z": "424211aa.fab598",
+        "group": "41d919af.074e08",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "format": "<div ng-bind-html=\"msg.payload\"></div>\n\n<div id=\"container\"></div>\n\n<script src=\"sigma.min.js\"></script>\n<script src=\"sigma.parsers.json.min.js\"></script>\n\n<script>\n    (function(scope) {\n        console.log('Position 1');\n        console.dir(scope);\n        scope.$watch('msg.payload', function(data) {\n            console.log('Position 2');\n            console.dir(data);\n        });\n    })(scope);\n    \n    sigma.parsers.json('msg.payload', {\n        container: 'container',\n        settings: {\n        defaultNodeColor: '#ec5148'\n    }   \n  });\n</script>\n</body>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 342,
+        "y": 211,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a344960c.359838",
+        "type": "inject",
+        "z": "424211aa.fab598",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "17062ff9.443018"
+            ]
+        ]
+    },
+    {
+        "id": "17062ff9.443018",
+        "type": "function",
+        "z": "424211aa.fab598",
+        "name": "dummy data",
+        "func": "var data = \n{\n  \"nodes\": [\n    {\n      \"id\": \"n0\",\n      \"label\": \"A node\",\n      \"x\": 0,\n      \"y\": 0,\n      \"size\": 3\n    },\n    {\n      \"id\": \"n1\",\n      \"label\": \"Another node\",\n      \"x\": 3,\n      \"y\": 1,\n      \"size\": 2\n    },\n    {\n      \"id\": \"n2\",\n      \"label\": \"And a last one\",\n      \"x\": 1,\n      \"y\": 3,\n      \"size\": 1\n    }\n  ],\n  \"edges\": [\n    {\n      \"id\": \"e0\",\n      \"source\": \"n0\",\n      \"target\": \"n1\"\n    },\n    {\n      \"id\": \"e1\",\n      \"source\": \"n1\",\n      \"target\": \"n2\"\n    },\n    {\n      \"id\": \"e2\",\n      \"source\": \"n2\",\n      \"target\": \"n0\"\n    }\n  ]\n}\nreturn data;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 230,
+        "y": 120,
+        "wires": [
+            [
+                "36f46095.5c11e8"
+            ]
+        ]
+    },
+    {
+        "id": "448378e8.68bd28",
+        "type": "inject",
+        "z": "c96fed1a.5013d",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "d9f9a30f.b65c28"
+            ]
+        ]
+    },
+    {
+        "id": "d9f9a30f.b65c28",
+        "type": "exec",
+        "z": "c96fed1a.5013d",
+        "command": "sudo journalctl -u nr-live2 -f -n 0 -o cat",
+        "addpay": false,
+        "append": "",
+        "useSpawn": true,
+        "timer": "",
+        "name": "",
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "619c948.a73256c"
+            ],
+            [
+                "619c948.a73256c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "28112d88.cc16c2",
+        "type": "ui_template",
+        "z": "c96fed1a.5013d",
+        "group": "e4400843.2147f8",
+        "name": "NR-Live2",
+        "order": 1,
+        "width": "",
+        "height": "",
+        "format": "<div ng-repeat=\"line in msg.payload track by $index\">\n  <div ng-style=\"{'margin-bottom':'1em'}\">{{line}}</div>\n</div>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "templateScope": "local",
+        "x": 760,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "619c948.a73256c",
+        "type": "function",
+        "z": "c96fed1a.5013d",
+        "name": "Accumulate",
+        "func": "// Use a fn context variable to track\n// the output lines\nif ( msg.payload === false ) {\n    // This lets us reset the log list\n    // if we want to, just inject a false payload\n    var lines = [];\n} else {\n    var lines = context.get('jrnlLines')|| [];\n\n    // Add the new output TO THE START\n    // so that the latest output is at the top\n    // of the displayed page\n    \n    // BUT we only want to display ACTUAL\n    // NR log output not all the other stuff\n    // that the journal outputs. Actual NR log\n    // output starts with a date (numeric)\n    if ( isNaN(parseInt(msg.payload.substr(0,1))) ) {\n        // Not numeric at start so not NR output\n        // ignore\n    } else {\n        lines.unshift(msg.payload);\n    }\n    \n    // # lines could get VERY large so cause memory\n    // issues, limit to 200\n    if ( lines.length > 200 ) {\n        // too big so drop the last element\n        lines.pop();\n    }\n}\n\n// save the total output in the context var\ncontext.set('jrnlLines',lines);\n\n// output all the lines to the UI template\nmsg.payload = lines;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 260,
+        "wires": [
+            [
+                "28112d88.cc16c2",
+                "63a04ba6.507324"
+            ]
+        ]
+    },
+    {
+        "id": "63a04ba6.507324",
+        "type": "debug",
+        "z": "c96fed1a.5013d",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 771,
+        "y": 301,
+        "wires": []
+    },
+    {
+        "id": "2a91cf7.4a6023",
+        "type": "inject",
+        "z": "c96fed1a.5013d",
+        "name": "",
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 431,
+        "y": 305,
+        "wires": [
+            [
+                "619c948.a73256c"
+            ]
+        ]
+    },
+    {
+        "id": "69328c7b.db5204",
+        "type": "comment",
+        "z": "c96fed1a.5013d",
+        "name": "Output Node-Red log to Dashboard (UI)",
+        "info": "See http://flows.nodered.org/flow/6dc1a137075ad93cd7c00224681afeda",
+        "x": 438,
+        "y": 214,
+        "wires": []
+    },
+    {
+        "id": "6499eea6.4189f8",
+        "type": "debug",
+        "z": "948b214b.6b74e",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 594.5,
+        "y": 536,
+        "wires": []
+    },
+    {
+        "id": "6c7faa15.89dd8c",
+        "type": "debug",
+        "z": "ce14a002.31eb6",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 602.5,
+        "y": 547,
+        "wires": []
+    },
+    {
+        "id": "8f15845d.4f63d8",
+        "type": "config",
+        "z": "a28e7aaa.32de",
+        "name": "Xbee Config",
+        "properties": [
+            {
+                "p": "Main",
+                "pt": "global",
+                "to": "ee7b",
+                "tot": "str"
+            },
+            {
+                "p": "Rain",
+                "pt": "global",
+                "to": "ed9b",
+                "tot": "str"
+            },
+            {
+                "p": "Xbees",
+                "pt": "global",
+                "to": "{\"Main\":{\"nodeID\":\"Main\",\"dest16\":\"ed9b\",\"dest64\":\"0013a20040a9ddf8\"}}",
+                "tot": "json"
+            },
+            {
+                "p": "Base",
+                "pt": "global",
+                "to": "0000",
+                "tot": "str"
+            }
+        ],
+        "active": false,
+        "x": 350,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "e59eb030.a1a598",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "5e5b223c.e55714"
+            ]
+        ]
+    },
+    {
+        "id": "5e5b223c.e55714",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Get AD0",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"D0\",\n  \tdestination64: \"0013A20040C456D3\",\n\tremoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 309,
+        "y": 172,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "602b6cc4.488d54",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Get Firmware Version",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"VR\",\n  \tdestination64: \"0013A20040C456D3\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 344,
+        "y": 229,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "2476c7e6.6b136",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 279,
+        "wires": [
+            [
+                "a30b3df3.714378"
+            ]
+        ]
+    },
+    {
+        "id": "a30b3df3.714378",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Get NodeID",
+        "func": "// See Xbee-API docs for API definitions\nvar dest16 = global.get(\"destXbee\");\n\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x08,//\"AT_COMMAND\",\n  \tcommand: \"NI\",\n  \tdestination16: dest16,\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 319,
+        "y": 281,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "60493f1a.684c8",
+        "type": "xbee-tx",
+        "z": "b883f942.771888",
+        "name": "",
+        "xBee": "7b401d11.84bfe4",
+        "x": 408.5,
+        "y": 104,
+        "wires": []
+    },
+    {
+        "id": "fb1d48fb.ce6cd",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 128.5,
+        "y": 229,
+        "wires": [
+            [
+                "602b6cc4.488d54"
+            ]
+        ]
+    },
+    {
+        "id": "bab6527.6397eb",
+        "type": "debug",
+        "z": "b883f942.771888",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "false",
+        "x": 420,
+        "y": 53,
+        "wires": []
+    },
+    {
+        "id": "931f11c3.e3fb28",
+        "type": "rpi-gpio out",
+        "z": "b883f942.771888",
+        "name": "Xbee RESET",
+        "pin": "24",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 110,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "1e5a62c3.1565fd",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 129,
+        "y": 332,
+        "wires": [
+            [
+                "2252f3f.dd9cb0c"
+            ]
+        ]
+    },
+    {
+        "id": "2252f3f.dd9cb0c",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Node Discovery",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x8,//\"AT_COMMAND\",\n  \tcommand: \"ND\",\n  \t//destination64: \"0013a20040b7b1fd\",\n\t//remoteCommandOptions: 0x02, \n  \tcommandParameter: [ ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 328,
+        "y": 333,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "cc158ebe.8ed528",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Set DIO4 ON",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x17,//\"RAT_COMMAND\",\n  \tcommand: \"D4\",\n  \t//destination64: \"0013a20040b7b1fd\",\n\tdestination16: \"ed9b\",\n\t//remoteCommandOptions: 0x04,\n  \tcommandParameter: [ 4 ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 321,
+        "y": 405,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "6b2296bf.9f53f",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 140,
+        "y": 406,
+        "wires": [
+            [
+                "cc158ebe.8ed528"
+            ]
+        ]
+    },
+    {
+        "id": "3dedf7c4.d97be8",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "Set DIO4 OFF",
+        "func": "// See Xbee-API docs for API definitions\nmsg.payload = { \n\t// Set type to string containing frame_type\n\ttype: 0x17,//\"RAT_COMMAND\",\n  \tcommand: \"D4\",\n  \tdestination64: \"0013a20040b7b1fd\",\n\t//remoteCommandOptions: 0x05,\n  \tcommandParameter: [  0x05 ]\n}; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 329,
+        "y": 471,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "f39abf2f.9712e",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 133,
+        "y": 470,
+        "wires": [
+            [
+                "3dedf7c4.d97be8"
+            ]
+        ]
+    },
+    {
+        "id": "aad3faea.0cc708",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "TEST1",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 110,
+        "y": 640,
+        "wires": [
+            [
+                "fb2e293a.380fb8"
+            ]
+        ]
+    },
+    {
+        "id": "3ed55eb8.ace8da",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "Rain",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 110,
+        "y": 720,
+        "wires": [
+            [
+                "fb2e293a.380fb8"
+            ]
+        ]
+    },
+    {
+        "id": "d88b87a2.44583",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "Main",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 110,
+        "y": 680,
+        "wires": [
+            [
+                "fb2e293a.380fb8"
+            ]
+        ]
+    },
+    {
+        "id": "fb2e293a.380fb8",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "set current xbee",
+        "func": "var xbees = global.get(\"XBees\");\nvar nodeID = msg.payload;\n\nvar dest16 = xbees[nodeID].remote16;\nvar dest64 = xbees[nodeID].remote64;\n\nif ( dest16 ) {\n    node.status( { text: nodeID+\":\"+dest16 } );\n}\n\nflow.set(\"destXbee\",nodeID);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 440,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "74e3994d.617a7",
+        "type": "link out",
+        "z": "b883f942.771888",
+        "name": "Xbee TX",
+        "links": [
+            "91c14e21.930748"
+        ],
+        "x": 586.5,
+        "y": 203,
+        "wires": []
+    },
+    {
+        "id": "91c14e21.930748",
+        "type": "link in",
+        "z": "b883f942.771888",
+        "name": "Xbee TX",
+        "links": [
+            "74e3994d.617a7",
+            "725da257.dc914c"
+        ],
+        "x": 253.5,
+        "y": 104,
+        "wires": [
+            [
+                "bab6527.6397eb",
+                "60493f1a.684c8"
+            ]
+        ]
+    },
+    {
+        "id": "51fe6770.90d55",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Get AD0",
+        "topic": "",
+        "payload": "{\"command\":\"D0\",\"commandParameter\":[]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 116,
+        "y": 821,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "8f1f8f55.e4a68",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "AT / RAT",
+        "func": "var nodeID = flow.get(\"destXbee\");\nvar xbees = global.get(\"XBees\");\n\nvar dest16 = xbees[nodeID].remote16;\nvar dest64 = xbees[nodeID].remote64;\n\nif ( dest16 ) {\n    node.status( {text:dest16+\":\"+dest64} );\n    msg.payload.destination64 = dest64;\n    msg.payload.type = 0x17;//RAT\n}else{\n    msg.payload.type = 0x08;//AT\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 517,
+        "y": 891,
+        "wires": [
+            [
+                "725da257.dc914c"
+            ]
+        ]
+    },
+    {
+        "id": "ff9739f5.226ba8",
+        "type": "comment",
+        "z": "b883f942.771888",
+        "name": "Xbee API notes",
+        "info": "# xbee-api [![Build Status](https://travis-ci.org/jankolkmeier/xbee-api.svg?branch=master)](https://travis-ci.org/jankolkmeier/xbee-api)\n\nThe [xbee-api](http://github.com/jankolkmeier/xbee-api/) [Node.js](http://nodejs.org/) module helps you\nparsing and building API frames that are used to communicate with radio modules talking\nthe [802.15.4](http://en.wikipedia.org/wiki/IEEE_802.15.4) and [ZigBee](http://en.wikipedia.org/wiki/ZigBee) (including **ZNet**) protocol stacks.\nThese are most commonly used in Digi's [xbee](http://www.digi.com/xbee) radio modules, hence the name of this node module.\nHowever, other devices with the mentioned protocol stacks are also supported.\nFor details on supported firmwares and devices, see [here](#supported-firmwares-and-devices).\n\n[xbee-api](http://github.com/jankolkmeier/xbee-api/) does *not* take care of the serial connection\nitself, but it is easy to hook it up to modules such as [serialport](https://github.com/voodootikigod/node-serialport/).\n\nNote that higher-level abstraction as currently provided in the now outdated [svd-xbee](https://github.com/jankolkmeier/svd-xbee/) is not part of this module anymore. Consider 101100's promise-based [xbee-promise](https://github.com/101100/xbee-promise) or Reactive Extensions based [xbee-rx](https://github.com/101100/xbee-rx) module! Some work has been done towards more abstract, stream-based modules:  [xbee-stream](https://github.com/jankolkmeier/xbee-stream/) and [xbee-stream-nodes](https://github.com/jankolkmeier/xbee-stream-nodes/) (both just prototypes).\n\n## GETTING STARTED\nInstall the module with: **[npm](https://npmjs.org/) install xbee-api**\n\n```javascript\nvar xbee_api = require('xbee-api');\nvar C = xbee_api.constants;\nvar xbeeAPI = new xbee_api.XBeeAPI();\n\n// Something we might want to send to an XBee...\nvar frame_obj = {\n  type: C.FRAME_TYPE.AT_COMMAND,\n  command: \"NI\",\n  commandParameter: [],\n};\nconsole.log(xbeeAPI.buildFrame(frame_obj));\n// <Buffer 7e 00 04 08 01 4e 49 5f>\n\n\n// Something we might receive from an XBee...\nvar raw_frame = new Buffer([\n\t0x7E, 0x00, 0x13, 0x97, 0x55, 0x00, 0x13, 0xA2, 0x00, 0x40, 0x52, 0x2B,\n\t0xAA, 0x7D, 0x84, 0x53, 0x4C, 0x00, 0x40, 0x52, 0x2B, 0xAA, 0xF0\n]);\n\nconsole.log(xbeeAPI.parseFrame(raw_frame));\n// { type: 151,\n//   id: 85,\n//   remote64: '0013a20040522baa',\n//   remote16: '7d84',\n//   command: 'SL',\n//   commandStatus: 0,\n//   commandData: [ 64, 82, 43, 170 ] }\n```\n\n**See the [Examples](#examples) section for more useful/practical examples!**\n\n## SUPPORTED FIRMWARES AND DEVICES\nThis module supports the [802.15.4](http://en.wikipedia.org/wiki/IEEE_802.15.4) and [ZigBee](http://en.wikipedia.org/wiki/ZigBee) (including **ZNet**) protocol stacks.\n\nFrom the XBee family, Series 1 (802.15.4) and Series 2 (ZNet 2.5 and ZigBee) modules are supported, since they come with firmwares talking either one of these stacks.\n\nThese documents are used as reference: [90000976.pdf (for Series 2)](https://www.digi.com/resources/documentation/digidocs/PDFs/90000976.pdf) and \n[90000982.pdf (for Series 1)](https://www.digi.com/resources/documentation/digidocs/pdfs/90000982.pdf). Some frame types are 802.15.4, ZNet or ZigBee specific. Be sure to use the correct ones for your module (as described in the documents and the list below). Also check out this [utility from Digi](http://docs.digi.com/display/XCTU/Frames+generator+tool).\n\nModules must run in API mode. Both AP=1 (without escaping) and AP=2 (with escaping) modes are supported (set the api_mode parameter accordingly).\n\nSince ZigBee is more robust and offers more features than ZNet (none of which are yet implemented here, though!), you might be interested in upgrading your Series 2 modules from ZNet 2.5 to ZigBee: [upgradingfromznettozb.pdf](ftp://ftp1.digi.com/support/documentation/upgradingfromznettozb.pdf).  \n\n## SUPPORTED FRAME TYPES\nThe following frame types are implemented:\n\n- 0x00: TX (Transmit) Request: 64-bit address (802.15.4)\n- 0x01: TX (Transmit) Request: 16-bit address (802.15.4)\n- 0x08: AT Command (802.15.4, ZNet, ZigBee)\n- 0x09: AT Command Queue Parameter Value (802.15.4, ZNet, ZigBee)\n- 0x17: Remote Command Request (802.15.4, ZNet, ZigBee)\n- 0x21: Create Source Route (ZigBee)\n- 0x80: RX (Receive) Packet: 64-bit Address (802.15.4)\n- 0x81: RX (Receive) Packet: 16-bit Address (802.15.4)\n- 0x82: RX (Receive) Packet: 64-bit Address IO (802.15.4)\n- 0x83: RX (Receive) Packet: 16-bit Address IO (802.15.4)\n- 0x88: AT Command Response (802.15.4, ZNet, ZigBee)\n- 0x89: TX (Transmit) Status (802.15.4)\n- 0x8A: Modem Status (802.15.4, ZNet, ZigBee)\n- 0x97: Remote Command Response (802.15.4, ZNet, ZigBee)\n- 0x10: ZigBee Transmit Request (ZNet, ZigBee)\n- 0x11: Explicit Addressing ZigBee Command Frame (ZNet, ZigBee)\n- 0x8B: ZigBee Transmit Status (ZNet, ZigBee)\n- 0x90: ZigBee Receive Packet (AO=0) (ZNet, ZigBee)\n- 0x91: ZigBee Explicit Rx Indicator (AO=1) (ZNet, ZigBee)\n- 0x92: ZigBee IO Data Sample Rx Indicator (ZNet, ZigBee)\n- 0x94: XBee Sensor Read Indicator (AO=0) (ZNet, ZigBee)\n- 0x95: Node Identification Indicator (AO=0) (ZNet, ZigBee)\n- 0xA1: Route Record Indicator (ZigBee)\n\n### NOT IMPLEMENTED YET\nThese (more esoteric) frame types have not been implemented yet, [Open a new issue](https://github.com/jankolkmeier/xbee-api/issues/new) if you need something in particular: \n\n- 0x24: Register Joining Device (ZigBee)\n- 0xA0: Over-the-Air Firmware Update Status (ZigBee)\n- 0xA2: Device Authenticated Indicator (ZigBee)\n- 0xA3: Many-to-One Route Request Indicator (ZigBee)\n- 0xA4: Register Joining Device Status (ZigBee)\n- 0xA5: Join Notification Status (ZigBee)\n\n### KNOWN ISSUES\nEnabling encryption with series 1 XBees / 802.15.4 devices causes some inexplicable problems - see [Issue #12](https://github.com/jankolkmeier/xbee-api/issues/12).\n\n## DOCUMENTATION\n\n### THE XBeeAPI CLASS\n\nTo get an instance `xbeeAPI` of the `XBeeAPI` class:\n```javascript\nvar xbee_api = require('xbee-api');\nvar xbeeAPI = new xbee_api.XBeeAPI({\n    // default options:\n    api_mode: 1,              // [1, 2]; 1 is default, 2 is with escaping (set ATAP=2)\n    module: \"Any\",            // [\"802.15.4\", \"ZNet\", \"ZigBee\", \"Any\"]; This does nothing, yet!\n    raw_frames: false,        // [true, false]; If set to true, only raw byte frames are\n                              //   emitted (after validation) but not parsed to objects. \n    convert_adc: true,        // [true, false]; If false, do not convert adc value to millivolt.\n    vref_adc: 1200,           // (int); Set the value to convert adc value to millivolt.\n    parser_buffer_size: 512,  // (int); size of the package parser buffer. 512 co\n                              //   when receiving A LOT of packets, you might want to decrease \n                              //   this to a smaller value (but typically not less than 128)\n    builder_buffer_size: 512  // (int); size of the package builder buffer. \n                              //   when sending A LOT of packets, you might want to decrease\n                              //   this to a smaller value (but typically not less than 128)\n});\n```\nIn the following a documentation of all class methods.\n\n#### xbeeAPI.buildFrame(frame)\nReturns an API frame (buffer) created from the passed frame object. See ***Creating frames from objects to write to the XBee*** for details on how these passed objects are specified.\n\n#### xbeeAPI.canParse(buffer)\nReturns whether the library implements a parser for the frame contained in the provided buffer. The buffer only needs to contain up to the frame type segment to determine if it can be parsed, but `parseFrame()` will need a complete frame.\n\n#### xbeeAPI.parseFrame(buffer)\nParses and returns a frame object from the buffer passed. Note that the buffer must be a complete frame, starting with the start byte and ending with the checksum byte. See ***Objects created from received API Frames*** for details on how the retured objects are specified.\n\n#### xbeeAPI.rawParser()\nReturns a parser function with the profile `function(emitter, buffer) {}`. This can be passed to a serial reader such as serialport. Note that XBeeAPI will not use the emitter to emit a parsed frame, but it's own emitter (see Event: 'frame_object').\n\n#### xbeeAPI.parseRaw(buffer)\nParses data in the buffer, assumes it is comming directly from the XBee. If a complete frame is collected, it is emitted as Event: 'frame_object'.\n\n#### Event: 'frame_object'\nIs emitted whenever a complete frame is collected and parsed.\n\n#### xbeeAPI.nextFrameId()\nIncrements the internal `frameId` counter and returns it. Useful for building requests where we want to identify the respective response frame later on.\n\n### CREATING FRAMES FROM OBJECTS TO WRITE TO THE XBEE\nThere are four basic requests we can make to the XBee of which two are essentially the same. We can make (queued) command requests (0x08 and 0x09) and *remote* command request (0x17). These all behave pretty much the same as writing AT commands in AT mode. Lastly, there are transmit requests which can be used to send your own data to other devices (0x10, 0x00, 0x01 - depending on your firmware).\n\nNote that many parameters have default values. For example, `destination16/64` default to their unknown/broadcast values. For non-single-byte parameters, you can choose to pass a string (`\"fffe\"`) or a byte array (`[0xff, 0xfe]`). We'd expect the latter to be slightly faster (but no benchmarks have been made).\n\n#### 0x08: AT Command (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x08, // xbee_api.constants.FRAME_TYPE.AT_COMMAND\n\tid: 0x52, // optional, nextFrameId() is called per default\n\tcommand: \"NJ\",\n\tcommandParameter: [],\n}\n```\nExecute the AT command set in `command`, optionally set a `comandParameter` value. An empty parameter usually queries the AT parameter value.\n\n#### 0x09: AT Command Queue Parameter Value (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x09, // xbee_api.constants.FRAME_TYPE.AT_COMMAND_QUEUE_PARAMETER_VALUE\n\tid: 0x01, // optional, nextFrameId() is called per default\n\tcommand: \"BD\",\n\tcommandParameter: [ 0x07 ]\n}\n```\nPretty much the same as AT Command Requests, except that the commands are queued and applied at once when either an `AC` command is queued or a regular AT command request is sent.\n\n#### 0x17: Remote Command Request (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x17, // xbee_api.constants.FRAME_TYPE.REMOTE_AT_COMMAND_REQUEST\n\tid: 0x01, // optional, nextFrameId() is called per default\n\tdestination64: \"0013a20040401122\",\n\tdestination16: \"fffe\", // optional, \"fffe\" is default\n\tremoteCommandOptions: 0x02, // optional, 0x02 is default\n\tcommand: \"BH\",\n\tcommandParameter: [ 0x01 ] // Can either be string or byte array.\n}\n```\nBehaves just as AT Command Requests, with additional `destination64/16` parameters set to the remote node on which the AT command is to be executed.\n\n#### 0x10: ZigBee Transmit Request (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x10, // xbee_api.constants.FRAME_TYPE.ZIGBEE_TRANSMIT_REQUEST\n\tid: 0x01, // optional, nextFrameId() is called per default\n\tdestination64: \"0013a200400a0127\",\n\tdestination16: \"fffe\", // optional, \"fffe\" is default\n\tbroadcastRadius: 0x00, // optional, 0x00 is default\n\toptions: 0x00, // optional, 0x00 is default\n\tdata: \"TxData0A\" // Can either be string or byte array.\n}\n```\nTransmit your own `data` to a remote node.\n\n\n#### 0x00: TX (Transmit) Request: 64-bit address (802.15.4)\n```javascript\n{\n\ttype: 0x00, // xbee_api.constants.FRAME_TYPE.TX_REQUEST_64 \n\tid: 0x01, // optional, nextFrameId() is called per default\n\tdestination64: \"0013a200400a0127\",\n\toptions: 0x00, // optional, 0x00 is default\n\tdata: \"TxData0A\" // Can either be string or byte array.\n}\n```\nTransmit your own `data` to a remote node using a 64 bit address. This is for Series 1 / 802.15.4 modules only!\n\n#### 0x01: TX (Transmit) Request: 16-bit address (802.15.4)\n```javascript\n{\n\ttype: 0x01, // xbee_api.constants.FRAME_TYPE.TX_REQUEST_16 \n\tid: 0x01, // optional, nextFrameId() is called per default\n\tdestination16: \"ab00\",\n\toptions: 0x00, // optional, 0x00 is default\n\tdata: \"TxData0A\" // Can either be string or byte array.\n}\n```\nTransmit your own `data` to a remote node using a 16 bit address. This is for Series 1 / 802.15.4 modules only!\n\n#### 0x11: Explicit Addressing ZigBee Command Frame (ZNet, ZigBee)\n```javascript\n{\n    type: 0x11, // xbee_api.constants.FRAME_TYPE.ZIGBEE_TRANSMIT_REQUEST\n    id: 0x01, // optional, nextFrameId() is called per default\n    destination64: \"0013a200400a0127\", // default is broadcast address\n    destination16: \"fffe\", // default is \"fffe\" (unknown/broadcast)\n    sourceEndpoint: 0xA0,\n    destinationEndpoint: 0xA1,\n    clusterId: \"1554\",\n    profileId: \"C105\",\n    broadcastRadius: 0x00, // optional, 0x00 is default\n    options: 0x00, // optional, 0x00 is default\n    data: \"TxData0A\" // Can either be string or byte array.\n}\n```\nAllows ZigBee application layer fields (endpoint and cluster ID) to be specified for a data transmission. Similar to the ZigBee Transmit Request, but also requires ZigBee application layer addressing fields to be specified (endpoints, cluster ID, profile ID). An Explicit Addressing Request API frame causes the module to send data as an RF packet to the specified destination, using the specified source and destination endpoints, cluster ID, and profile ID.\n\n#### 0x21: Create Source Route (ZNet, ZigBee)\n```javascript\n{\n    type: 0x21, // xbee_api.constants.FRAME_TYPE.CREATE_SOURCE_ROUTE\n    destination64: \"deadbeefcafebabe\", // Must be a unicast address\n    destination16: \"adad\", // Must be a unicast address\n\taddresses: [ // List of hops to destination (usually get these from route record indicator frames)\n\t\t'babe', // Hop closes to destination\n\t\t'beef',\n\t\t'cafe'  // Hop closest to source\n\t]\n}\n```\nThis sets a source route for sending a packet using a hard-coded route. See the ZigBee documentation on using source routing.\n\n### OBJECTS CREATED FORM RECEIVED API FRAMES\nObjects created from API frames that the XBee would recieve contain a `type` property that identifies the frame type. If the frame is a response to a query made earlier, the `id` that was used for that request is also included.\n\n#### 0x88: AT Command Response (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x88, // xbee_api.constants.FRAME_TYPE.AT_COMMAND_RESPONSE \n\tid: 0x01,\n\tcommand: \"BD\",\n\tcommandStatus: 0x00,\n\tcommandData: []\n}\n```\nThis is a response to a AT command request, for example to query or change an AT parameter value on the XBee module. The command was, in this case, setting the `BD` parameter of module. The command status `0` means `OK` (see [Constants](#constants) for more), which means that the baud rate was changed successfully. \n\n#### 0x97: Remote Command Response (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x97, // xbee_api.constants.FRAME_TYPE.REMOTE_COMMAND_RESPONSE \n\tid: 0x01,\n\tremote64: \"0013a20040522baa\",\n\tremote16: \"7d84\",\n\tcommand: \"SL\",\n\tcommandStatus: 0x00,\n\tcommandData: [ 0x40, 0x52, 0x2b, 0xaa ]\n}\n```\nThis is a response to a *remote* AT command request, for example to query or change an AT parameter value on another device in the network. This seems to be a response from the node with the address `0013a20040522baa`. The requested command was, in this case, `SL`. The command status `0` means `OK`.\n\n\n#### 0x8B: ZigBee Transmit Status (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x8B, // xbee_api.constants.FRAME_TYPE.ZIGBEE_TRANSMIT_STATUS \n\tid: 0x01,\n\tremote16: \"7d84\",\n\ttransmitRetryCount: 0,\n\tdeliveryStatus: 0,\n\tdiscoveryStatus: 1\n}\n```\nThis status is received after sending out a transmit request to the XBee (i.e. to send some text data to another module). The status contains the 16bit network address `remote16`, the number of transmission retries, information about whether delivery was successful and about any discoveries made.\n\n#### 0x8A: Modem Status (802.15.4, ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x8a, // xbee_api.constants.FRAME_TYPE.MODEM_STATUS \n\tmodemStatus: 0x06\n}\n```\nThese statuses give information about the general operation of the XBee. See the [Constants](#constants) section for more.\n\n#### 0x90: ZigBee Receive Packet (AO=0) (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x90, // xbee_api.constants.FRAME_TYPE.ZIGBEE_RECEIVE_PACKET \n\tremote64: \"0013a20040522baa\",\n\tremote16: \"7d84\",\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\nThis frame contains general data (such as text data) received from remote nodes.\n\n#### 0x91: ZigBee Explicit Rx Indicator (AO=1) (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x90, // xbee_api.constants.FRAME_TYPE.ZIGBEE_EXPLICIT_RX\n\tremote64: \"0013a20040522baa\",\n\tremote16: \"7d84\",\n\tsourceEndpoint: \"e8\",\n\tdestinationEndpoint: \"e8\",\n\tclusterId: \"0011\",\n\tprofileId: \"c105\",\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\n\n#### 0x92: ZigBee IO Data Sample Rx Indicator (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x92, // xbee_api.constants.FRAME_TYPE.ZIGBEE_IO_DATA_SAMPLE_RX \n\tremote64: \"0013a20040522baa\",\n\tremote16: \"7d84\",\n\treceiveOptions: 0x01,\n\tnumSamples: 1,\n\tdigitalSamples: {\n\t\t\"DIO2\": 1,\n\t\t\"DIO3\": 0,\n\t\t\"DIO4\": 1\n\t},\n\tanalogSamples: {\n\t\t\"AD1\": 644\n\t}\n}\n```\nAn I/O data sample that contains information about the state of the digital and analog I/O pins that are set to sample data. Here, pins `DIO2` & `DIO4` read `HIGH`, `DIO3` reads `LOW`, and `AD1` samples an analog voltage of `644mV`.\n\n#### 0x94: XBee Sensor Read Indicator (AO=0) (ZNet, ZigBee)\n```javascript\n{\n    type: 0x94, // xbee_api.constants.FRAME_TYPE.XBEE_SENSOR_READ \n    remote64: \"0013a20040522baa\",\n    remote16: \"7d84\",\n    sensors: 0x03,\n    receiveOptions: 0x01,\n    sensorValues: {\n      AD0:   40, // A/D values in mV\n      AD1: 4120,\n      AD2: 4680,\n      AD3: 1640,\n      T: 362,\n      temperature: 22.625,     // in °C, undefined if no temp sens\n      relativeHumidity: 30.71, // in %, undefined if no hum sens\n      trueHumidity: 30.54,     // in %, undefined if not both temp & hum\n      waterPresent: false\n    }\n}\n```\nWhen the module receives a sensor sample (from a Digi 1-wire sensor adapter).\n\n#### 0x95: Node Identification Indicator (AO=0) (ZNet, ZigBee)\n```javascript\n{\n\ttype: 0x95, // xbee_api.constants.FRAME_TYPE.NODE_IDENTIFICATION\n\tsender64: \"0013a20040522baa\"\n\tsender16: \"7d84\"\n\treceiveOptions: 0x02\n\tremote64: \"0013a20040522baa\"\n\tremote16:\"7d84\"\n\tnodeIdentifier: \"MY_ROUTER\",\n\tremoteParent16: \"fffe\",\n\tdeviceType: 0x01,\n\tsourceEvent: 0x01\n}\n```\nModules with the `JN` (Join Notification) parameter enabled will transmit a broadcast Node Identification Indicator packet on power up and when joining. This can also be sent when the D0 button is pressed. Which of these events occurred is set in the `sourceEvent` property. `sender64/16` here is the one from who the packet was received, whereas `remote64/16` is the identified node itself (may be the same).\n\n#### 0x80: RX (Receive) Packet: 64-bit Address (802.15.4)\n```javascript\n{\n\ttype: 0x80, // xbee_api.constants.FRAME_TYPE.RX_PACKET_64 \n\tremote64: \"0013a20040522baa\",\n\trssi: 0x3f\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\nThis frame contains general data (such as text data) received from remote nodes(64 bit address). This is received only from Series 1 / 802.15.4 hardware.\n\n#### 0x81: RX (Receive) Packet: 16-bit Address (802.15.4)\n```javascript\n{\n\ttype: 0x81, // xbee_api.constants.FRAME_TYPE.RX_PACKET_16 \n\tremote64: \"522b\",\n\trssi: 0x3f\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\nThis frame contains general data (such as text data) received from remote nodes(16 bit address). This is received only from Series 1 / 802.15.4 hardware.\n\n#### 0x82: RX (Receive) Packet: 64-bit Address IO (802.15.4)\n```javascript\n{\n\ttype: 0x82, // xbee_api.constants.FRAME_TYPE.RX_PACKET_64_IO \n\tremote64: \"0013a20040522baa\",\n\trssi: 0x3f\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\nThis frame contains I/O data received from remote nodes (64 bit address). This is received only from Series 1 / 802.15.4 hardware.\n\n#### 0x83: RX (Receive) Packet: 16-bit Address IO (802.15.4)\n```javascript\n{\n\ttype: 0x83, // xbee_api.constants.FRAME_TYPE.RX_PACKET_16_IO \n\tremote64: \"522b\",\n\trssi: 0x3f\n\treceiveOptions: 0x01,\n\tdata: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]\n}\n```\nThis frame contains I/O data received from remote nodes (16 bit address). This is received only from Series 1 / 802.15.4 hardware.\n\n#### 0x89: TX (Transmit) Status (802.15.4)\n```javascript\n{\n\ttype: 0x89, // xbee_api.constants.FRAME_TYPE.TX_STATUS \n\tid: 0x01,\n\tdeliveryStatus: 0\n}\n```\nWhen a TX Request is completed, the module sends a TX Status message. This message will indicate if the packet was transmitted successfully or if there was a failure (`deliveryStatus`).\n\n### CONSTANTS\nYou don't have to remember the hex-numbers of the frame types, command options, status types, etc. Everything is defined in two-way constants. See the examples below:\n\n```javascript\nvar xbee_api = require('xbee-api');\nvar C = xbee_api.constants;\n\n// Frame types (frame.type):\nC.FRAME_TYPE.ZIGBEE_TRANSMIT_REQUEST; // 0x10\nC.FRAME_TYPE[0x10] // \"ZigBee Transmit Request (0x10)\";\n\n// Command Status (frame.commandStatus)\nC.COMMAND_STATUS.ERROR; // 0x01\nC.COMMAND_STATUS[0x01]; // \"(Error (0x01)\"\n\n// Discovery Status (frame.discoveryStatus)\nC.DISCOVERY_STATUS.ADDRESS_DISCOVERY // 0x01\nC.DISCOVERY_STATUS[0x01] // \"Address Discovery (0x01)\"\n\n// Delivery Status (frame.deliveryStatus)\nC.DELIVERY_STATUS.ADDRESS_NOT_FOUND // 0x24\nC.DELIVERY_STATUS[0x24] // \"Address Not Found (0x24)\"\n\n// Modem Status (frame.modemStatus)\nC.MODEM_STATUS.JOINED_NETWORK // 0x02\nC.MODEM_STATUS[0x02] // \"Joined Network (0x02)\"\n\n// Receive Options (frame.receiveOptions)\nC.RECEIVE_OPTIONS.PACKET_ACKNOWLEDGED // 0x01;\nC.RECEIVE_OPTIONS[0x01] // \"Packet Acknowledged (0x01)\"\n\n// Device Type (frame.deviceType)\nC.DEVICE_TYPE.END_DEVICE // 0x02\nC.DEVICE_TYPE[0x02] // \"End Device (0x02)\"\n```\n\nPlease refer to `lib/constants.js` for a more complete list, and your module's documentation for more explanation.\n\n## EXAMPLES\nTo combine with [serialport](https://github.com/node-serialport/node-serialport/), using the streaming API, we use the builder and parser transform streams. \n```javascript\nvar SerialPort = require('serialport').SerialPort;\nvar xbee_api = require('xbee-api');\nvar C = xbee_api.constants;\n\nvar xbeeAPI = new xbee_api.XBeeAPI({\n  api_mode: 1\n});\n\nvar serialport = new SerialPort(\"COM19\", {\n  baudrate: 57600,\n});\n\nserialport.pipe(xbeeAPI.parser);\nxbeeAPI.builder.pipe(serialport);\n\nserialport.on(\"open\", function() {\n  var frame_obj = { // AT Request to be sent\n    type: C.FRAME_TYPE.AT_COMMAND,\n    command: \"NI\",\n    commandParameter: [],\n  };\n\n  xbeeAPI.builder.write(frame_obj);\n});\n\n// All frames parsed by the XBee will be emitted here\nxbeeAPI.parser.on(\"data\", function(frame) {\n\tconsole.log(\">>\", frame);\n});\n```\n\nTo link a received frame object to a request we earlier sent, we have to set and remember the `frame.id` of our request. Then, when a new frame object is emitted, we could look it up and route the response back.\n\n```javascript\n\nvar frameId = xbeeAPI.nextFrameId();\nvar frame_obj = {\n\ttype: C.FRAME_TYPE.AT_COMMAND,\n\tid: frameId,\n\tcommand: \"NI\",\n\tcommandParameter: []\n};\n\nxbeeAPI.builder.write(frame_obj);\n\n// All frames parsed by the XBee will be emitted here\nxbeeAPI.parser.on(\"data\", function(frame) {\n\tif (frame.id == frameId &&\n\t    frame.type == C.FRAME_TYPE.AT_COMMAND_RESPONSE) {\n\t\t// This frame is definitely the response!\n\t\tconsole.log(\"Node identifier:\",\n\t\t\tString.fromCharCode(frame.commandData));\n\t} else {\n\t\t// This is some other frame\n\t}\n});\n```\n\nSee the [examples folder](https://github.com/jankolkmeier/xbee-api/tree/master/examples) in the repository for more examples.\n\n### Use in Google Chrome\nSee this [example](http://github.com/jankolkmeier/xbee-api/tree/master/examples/chrome-tool) for how to use [xbee-api](https://github.com/jankolkmeier/xbee-api/) in Google Chrome using the [chrome.serial](http://developer.chrome.com/apps/serial.html) API.\n\n## CONTRIBUTE\nFeel free to send a pull request. There are nodeunit test in the `test/` folder (clone; run `npm install`; run `grunt nodeunit`).\n\n## LICENSE\nCopyright (c) 2013 Jan Kolkmeier  \nLicensed under the MIT license.",
+        "x": 120,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "60e1a384.03b464",
+        "type": "function",
+        "z": "b883f942.771888",
+        "name": "AT",
+        "func": "msg.payload.type = 0x08;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 540,
+        "wires": [
+            [
+                "74e3994d.617a7"
+            ]
+        ]
+    },
+    {
+        "id": "579734bf.68cd74",
+        "type": "comment",
+        "z": "b883f942.771888",
+        "name": "Local commands",
+        "info": "Send commands to the attached co-ordinator",
+        "x": 118.5,
+        "y": 141,
+        "wires": []
+    },
+    {
+        "id": "62b8f542.08830c",
+        "type": "comment",
+        "z": "b883f942.771888",
+        "name": "Remote commands",
+        "info": "Send commands to a remote node",
+        "x": 115.5,
+        "y": 591,
+        "wires": []
+    },
+    {
+        "id": "4e033872.b46038",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Get AD0",
+        "topic": "",
+        "payload": "{\"command\":\"D0\",\"commandParameter\":[]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 120,
+        "y": 540,
+        "wires": [
+            [
+                "60e1a384.03b464"
+            ]
+        ]
+    },
+    {
+        "id": "725da257.dc914c",
+        "type": "link out",
+        "z": "b883f942.771888",
+        "name": "",
+        "links": [
+            "91c14e21.930748"
+        ],
+        "x": 668,
+        "y": 888,
+        "wires": []
+    },
+    {
+        "id": "6aa6d329.1a87d4",
+        "type": "debug",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 404,
+        "y": 424,
+        "wires": []
+    },
+    {
+        "id": "d2ee8b0e.edc91",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D4 low (Enable J8)",
+        "topic": "",
+        "payload": "{\"command\":\"D4\",\"commandParameter\":[4]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 159,
+        "y": 868,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "8b3ce5be.7f3bf",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D4 hi (Disable J8)",
+        "topic": "",
+        "payload": "{\"command\":\"D4\",\"commandParameter\":[5]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 159,
+        "y": 908,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "7f287695.3dafc",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D7 low (Enable J9)",
+        "topic": "",
+        "payload": "{\"command\":\"D7\",\"commandParameter\":[4]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 160,
+        "y": 970,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "20cfa09c.566a",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D7 hi (Disable J9)",
+        "topic": "",
+        "payload": "{\"command\":\"D7\",\"commandParameter\":[5]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 160,
+        "y": 1010,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "cac60ac5.bbe058",
+        "type": "debug",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 404,
+        "y": 385,
+        "wires": []
+    },
+    {
+        "id": "4fe98aa0.ecc0ec",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Discover Nodes",
+        "topic": "",
+        "payload": "{\"command\":\"ND\",\"commandParameter\":[]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 137,
+        "y": 780,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "ea4b476.bdb9f38",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "",
+        "topic": "",
+        "payload": "Base",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 337,
+        "y": 640,
+        "wires": [
+            [
+                "fb2e293a.380fb8"
+            ]
+        ]
+    },
+    {
+        "id": "5c53d08c.6f809",
+        "type": "switch",
+        "z": "a28e7aaa.32de",
+        "name": "msg.command",
+        "property": "payload.command",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ND",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 1,
+        "x": 368.5,
+        "y": 463,
+        "wires": [
+            [
+                "2d64295f.331b76"
+            ]
+        ],
+        "outputLabels": [
+            "ND"
+        ]
+    },
+    {
+        "id": "2d64295f.331b76",
+        "type": "function",
+        "z": "a28e7aaa.32de",
+        "name": "save nodeID",
+        "func": "var xbees = global.get(\"XBees\")||{};\nvar nodeIdentification = msg.payload.nodeIdentification;\nvar thisNode = nodeIdentification.nodeIdentifier.trim();\n\nxbees[thisNode] = nodeIdentification;\n\nglobal.set(\"XBees\",xbees );\n\nnode.log(\"Found station: \" + thisNode);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 522.5,
+        "y": 507,
+        "wires": [
+            [
+                "22f8600f.a1e8b8"
+            ]
+        ]
+    },
+    {
+        "id": "22f8600f.a1e8b8",
+        "type": "debug",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 654.5,
+        "y": 558,
+        "wires": []
+    },
+    {
+        "id": "89a7ac47.7c74f8",
+        "type": "inject",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "topic": "",
+        "payload": "{\"type\":151,\"id\":42,\"remote64\":\"0013a20040b7b1fd\",\"remote16\":\"ee7b\",\"command\":\"ND\",\"commandStatus\":0,\"nodeIdentification\":{\"remote16\":\"ee7b\",\"remote64\":\"0013a20040b7b1fd\",\"nodeIdentifier\":\" Main\",\"remoteParent16\":\"fffe\",\"deviceType\":1,\"sourceEvent\":0,\"digiProfileID\":\"c105\",\"digiManufacturerID\":\"101e\"}}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 141.5,
+        "y": 674,
+        "wires": [
+            [
+                "45ab8248.c284fc"
+            ]
+        ]
+    },
+    {
+        "id": "e8f1987c.3ffa6",
+        "type": "debug",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 540.5,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "45ab8248.c284fc",
+        "type": "switch",
+        "z": "a28e7aaa.32de",
+        "name": "",
+        "property": "payload.command",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ND",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 1,
+        "x": 350.5,
+        "y": 676,
+        "wires": [
+            [
+                "e8f1987c.3ffa6"
+            ]
+        ]
+    },
+    {
+        "id": "79ac4a87.e18c0c",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D6 low (NO)",
+        "topic": "",
+        "payload": "{\"command\":\"D6\",\"commandParameter\":[4]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 139,
+        "y": 1051,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
+    },
+    {
+        "id": "2005ab11.0338d4",
+        "type": "inject",
+        "z": "b883f942.771888",
+        "name": "Set D6 hi (NC)",
+        "topic": "",
+        "payload": "{\"command\":\"D6\",\"commandParameter\":[5]}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 129,
+        "y": 1091,
+        "wires": [
+            [
+                "8f1f8f55.e4a68"
+            ]
+        ]
     }
 ]

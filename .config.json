@@ -789,6 +789,23 @@
      "file": "/usr/lib/node_modules/node-red-node-smooth/17-smooth.js"
     }
    }
+  },
+  "node-red-contrib-config": {
+   "name": "node-red-contrib-config",
+   "version": "1.1.2",
+   "local": true,
+   "nodes": {
+    "config": {
+     "name": "config",
+     "types": [
+      "config"
+     ],
+     "enabled": true,
+     "local": true,
+     "module": "node-red-contrib-config",
+     "file": "/home/pi/.node-red/node_modules/node-red-contrib-config/config.js"
+    }
+   }
   }
  },
  "_credentialSecret": "1100082a71463142e33b821709f59dd12d5b63ee3c9cba635ee1a4602c980a14"
